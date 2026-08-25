@@ -15,4 +15,10 @@ public:
     
     // Load a raw binary file into the RAM array
     void load_binary(const char* filename);
+
+    uint8_t read8(uint32_t address);
+    uint16_t read16(uint32_t address);
+    
+    void write8(uint32_t address, uint8_t value);
+    void write16(uint32_t address, uint16_t value);
 };

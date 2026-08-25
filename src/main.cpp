@@ -6,16 +6,19 @@
 int main() {
     Memory mem;
     // Load your compiled RISC-V code here
-    // mem.load_binary("../test_firmware/firmware.bin"); 
+    mem.load_binary("../test_firmware/firmware.bin"); 
     
     CPU cpu(&mem);
 
-    // Run 100 instructions as a test
+    // Run up to 100 instructions, but stop early if step() returns false
     for(int i = 0; i < 100; i++) {
-        cpu.step();
+        if (cpu.step() == false) {
+            break; // Exit the loop safely
+        }
     }
 
     cpu.dump_registers();
+
     return 0;
 }
 

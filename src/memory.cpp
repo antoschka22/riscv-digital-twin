@@ -1,4 +1,3 @@
-
 #include "memory.h"
 #include <fstream>
 #include <iostream>
@@ -50,4 +49,40 @@ void Memory::load_binary(const char* filename) {
     if (file.read(reinterpret_cast<char*>(ram.data()), size)) {
         std::cout << "Loaded " << size << " bytes into memory." << std::endl;
     }
+}
+
+uint8_t Memory::read8(uint32_t address) {
+    if (address >= ram.size()) {
+        std::cerr << "Memory read fault at: 0x" << std::hex << address << std::endl;
+        return 0;
+    }
+    return ram[address];
+}
+
+uint16_t Memory::read16(uint32_t address) {
+    if (address + 1 >= ram.size()) {
+        std::cerr << "Memory read fault at: 0x" << std::hex << address << std::endl;
+        return 0;
+    }
+    // Stitch 2 bytes together (Little-Endian)
+    return (uint16_t)(ram[address]) |
+           ((uint16_t)(ram[address + 1]) << 8);
+}
+
+void Memory::write8(uint32_t address, uint8_t value) {
+    if (address >= ram.size()) {
+        std::cerr << "Memory write fault at: 0x" << std::hex << address << std::endl;
+        return;
+    }
+    ram[address] = value;
+}
+
+void Memory::write16(uint32_t address, uint16_t value) {
+    if (address + 1 >= ram.size()) {
+        std::cerr << "Memory write fault at: 0x" << std::hex << address << std::endl;
+        return;
+    }
+    // Break the 16-bit value into 2 bytes (Little-Endian)
+    ram[address]     = (value & 0x00FF);
+    ram[address + 1] = (value & 0xFF00) >> 8;
 }
