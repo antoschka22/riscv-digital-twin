@@ -98,6 +98,9 @@ bool CPU::step() {
                                 regs[rd] = regs[rs1] >> shamt; 
                             }
                             break;
+                        default: 
+                            trap(2, instruction); 
+                            return true;
                     }
                 }
                 pc += 4; 
@@ -117,7 +120,7 @@ bool CPU::step() {
                                 regs[rd] = (uint32_t)(((int64_t)(int32_t)regs[rs1] * (int64_t)(int32_t)regs[rs2]) >> 32); 
                                 break;
                             case 0x2: // MULHSU (Signed * Unsigned)
-                                regs[rd] = (uint32_t)(((int64_t)(int32_t)regs[rs1] * (uint64_t)regs[rs2]) >> 32);
+                                regs[rd] = (uint32_t)(((int64_t)(int32_t)regs[rs1] * (int64_t)(uint32_t)regs[rs2]) >> 32);
                                 break;
                             case 0x3: // MULHU (Unsigned * Unsigned)
                                 regs[rd] = (uint32_t)(((uint64_t)regs[rs1] * (uint64_t)regs[rs2]) >> 32);
@@ -154,6 +157,9 @@ bool CPU::step() {
                                     regs[rd] = regs[rs1] % regs[rs2];
                                 }
                                 break;
+                            default: 
+                                trap(2, instruction); 
+                                return true;
                         }
                     } else {
                         // --- Base ALU Operations ---
@@ -192,7 +198,10 @@ bool CPU::step() {
                                 break; 
                             case 0x7: 
                                 regs[rd] = regs[rs1] & regs[rs2]; // AND
-                                break; 
+                                break;
+                            default: 
+                                trap(2, instruction); 
+                                return true;
                         }
                     }
                 }
@@ -223,6 +232,9 @@ bool CPU::step() {
                         case 0x5: // LHU (Load Halfword Unsigned)
                             regs[rd] = mem->read16(addr);
                             break;
+                        default:
+                            trap(2, instruction);
+                            return true;
                     }
                 }
                 pc += 4;
@@ -245,6 +257,9 @@ bool CPU::step() {
                     case 0x2: // SW (Store Word)
                         mem->write32(addr, regs[rs2]);
                         break;
+                    default: 
+                        trap(2, instruction); 
+                        return true;
                 }
                 pc += 4;
             }
@@ -266,6 +281,9 @@ bool CPU::step() {
                     case 0x5: take_branch = ((int32_t)regs[rs1] >= (int32_t)regs[rs2]); break; // BGE
                     case 0x6: take_branch = (regs[rs1] < regs[rs2]); break;                    // BLTU
                     case 0x7: take_branch = (regs[rs1] >= regs[rs2]); break;                   // BGEU
+                    default: 
+                        trap(2, instruction); 
+                        return true;
                 }
 
                 if (take_branch) {
@@ -354,8 +372,8 @@ bool CPU::step() {
                             result = (t > regs[rs2]) ? t : regs[rs2];
                             break;
                         default:
-                            std::cout << "Unknown AMO funct5: 0x" << std::hex << funct5 << std::endl;
-                            break;
+                            trap(2, instruction); // Illegal Instruction
+                            return true;
                     }
                     
                     mem->write32(addr, result); // Write back modified value
@@ -377,15 +395,15 @@ bool CPU::step() {
         case 0x73: // SYSTEM & Zicsr Extension
             {
                 uint16_t csr_addr = instruction >> 20;
-                uint32_t zimm = rs1; // For immediate variants, rs1 field acts as a 5-bit zero-extended immediate
+                uint32_t zimm = rs1; 
                 
                 switch(funct3) {
                     case 0x0: 
                         // ECALL, EBREAK, MRET
                         if (instruction == 0x00000073) {
                             // ECALL: Trigger a trap with cause 11 (M-mode ecall)
-                            trap(11);
-                            return true; // Note: We do NOT increment PC; trap() sets the new PC.
+                            trap(11, 0);
+                            return true; 
                             
                         } else if (instruction == 0x00100073) {
                             // EBREAK: Trigger a trap with cause 3 (Breakpoint)
@@ -395,18 +413,18 @@ bool CPU::step() {
                         } else if (instruction == 0x30200073) {
                             // MRET: Return from OS trap handler
                             pc = read_csr(CSR_MEPC);
-                            // Note: A full OS implementation would also restore mstatus interrupt bits here
                             return true; 
                         } else {
-                            std::cout << "Unknown SYSTEM Privileged Instruction at PC: 0x" << std::hex << pc << std::endl;
-                            return false;
+                            trap(2, instruction); //Illegal Instruction
+                            return true;
                         }
                         break;
                         
                     case 0x1: // CSRRW (Read / Write)
                         {
-                            uint32_t t = read_csr(csr_addr);
-                            write_csr(csr_addr, regs[rs1]);
+                            uint32_t t = 0;
+                            if (rd != 0) t = read_csr(csr_addr); // Only read if rd != x0
+                            write_csr(csr_addr, regs[rs1]);      // Always write
                             if (rd != 0) regs[rd] = t;
                         }
                         break;
@@ -430,7 +448,8 @@ bool CPU::step() {
                         
                     case 0x5: // CSRRWI (Read / Write Immediate)
                         {
-                            uint32_t t = read_csr(csr_addr);
+                            uint32_t t = 0;
+                            if (rd != 0) t = read_csr(csr_addr);
                             write_csr(csr_addr, zimm);
                             if (rd != 0) regs[rd] = t;
                         }
@@ -453,8 +472,8 @@ bool CPU::step() {
                         break;
                         
                     default:
-                        std::cout << "Unknown CSR funct3: 0x" << std::hex << funct3 << std::endl;
-                        return false;
+                            trap(2, instruction); // Illegal Instruction
+                            return true;
                 }
                 
                 pc += 4; // Advance PC for CSR instructions
@@ -462,8 +481,9 @@ bool CPU::step() {
             return true;
         
         default:
-            std::cout << "Unknown opcode: 0x" << std::hex << opcode << " at PC: 0x" << pc << std::endl;
-            return false; // Stop on error
+            // Illegal Instruction Trap
+            trap(2, instruction);
+            return true; 
     }
-    return false; // Default fallback
+    return true;
 }
