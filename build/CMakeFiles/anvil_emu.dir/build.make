@@ -127,6 +127,8 @@ anvil_emu: CMakeFiles/anvil_emu.dir/src/main.cpp.o
 anvil_emu: CMakeFiles/anvil_emu.dir/src/cpu.cpp.o
 anvil_emu: CMakeFiles/anvil_emu.dir/src/memory.cpp.o
 anvil_emu: CMakeFiles/anvil_emu.dir/build.make
+anvil_emu: /opt/homebrew/lib/libSDL2main.a
+anvil_emu: /opt/homebrew/lib/libSDL2-2.0.0.dylib
 anvil_emu: CMakeFiles/anvil_emu.dir/link.txt
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/Users/antoniomolina/Desktop/riscv-digital-twin/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Linking CXX executable anvil_emu"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/anvil_emu.dir/link.txt --verbose=$(VERBOSE)

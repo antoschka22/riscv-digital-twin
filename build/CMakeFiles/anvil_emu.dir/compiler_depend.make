@@ -822,7 +822,9 @@ CMakeFiles/anvil_emu.dir/src/main.cpp.o: /Users/antoniomolina/Desktop/riscv-digi
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/Availability.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/AvailabilityInternal.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/AvailabilityInternalLegacy.h \
+  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/AvailabilityMacros.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/AvailabilityVersions.h \
+  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/TargetConditionals.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/___wctype.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/__wctype.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/__xlocale.h \
@@ -830,6 +832,7 @@ CMakeFiles/anvil_emu.dir/src/main.cpp.o: /Users/antoniomolina/Desktop/riscv-digi
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/_bounds.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/_ctermid.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/_ctype.h \
+  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/_inttypes.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/_locale.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/_locale_posix2008.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/_mb_cur_max.h \
@@ -1441,10 +1444,11 @@ CMakeFiles/anvil_emu.dir/src/main.cpp.o: /Users/antoniomolina/Desktop/riscv-digi
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/deque \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/errno.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/exception \
+  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/float.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/format \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/functional \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/initializer_list \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/iomanip \
+  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/inttypes.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/ios \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/iosfwd \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/iostream \
@@ -1484,6 +1488,8 @@ CMakeFiles/anvil_emu.dir/src/main.cpp.o: /Users/antoniomolina/Desktop/riscv-digi
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/wctype.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/ctype.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/errno.h \
+  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/float.h \
+  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/inttypes.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/libkern/_OSByteOrder.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/libkern/arm/_OSByteOrder.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/limits.h \
@@ -1606,12 +1612,16 @@ CMakeFiles/anvil_emu.dir/src/main.cpp.o: /Users/antoniomolina/Desktop/riscv-digi
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/xlocale.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/xlocale/___wctype.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/xlocale/_ctype.h \
+  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/xlocale/_inttypes.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/xlocale/_stdio.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/xlocale/_stdlib.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/xlocale/_string.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/xlocale/_time.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/xlocale/_wchar.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/xlocale/_wctype.h \
+  /Library/Developer/CommandLineTools/usr/lib/clang/21/include/__float_float.h \
+  /Library/Developer/CommandLineTools/usr/lib/clang/21/include/__float_header_macro.h \
+  /Library/Developer/CommandLineTools/usr/lib/clang/21/include/__float_infinity_nan.h \
   /Library/Developer/CommandLineTools/usr/lib/clang/21/include/__stdarg___gnuc_va_list.h \
   /Library/Developer/CommandLineTools/usr/lib/clang/21/include/__stdarg___va_copy.h \
   /Library/Developer/CommandLineTools/usr/lib/clang/21/include/__stdarg_header_macro.h \
@@ -1627,13 +1637,69 @@ CMakeFiles/anvil_emu.dir/src/main.cpp.o: /Users/antoniomolina/Desktop/riscv-digi
   /Library/Developer/CommandLineTools/usr/lib/clang/21/include/__stddef_rsize_t.h \
   /Library/Developer/CommandLineTools/usr/lib/clang/21/include/__stddef_size_t.h \
   /Library/Developer/CommandLineTools/usr/lib/clang/21/include/__stddef_wchar_t.h \
+  /Library/Developer/CommandLineTools/usr/lib/clang/21/include/arm_bf16.h \
+  /Library/Developer/CommandLineTools/usr/lib/clang/21/include/arm_neon.h \
+  /Library/Developer/CommandLineTools/usr/lib/clang/21/include/arm_vector_types.h \
+  /Library/Developer/CommandLineTools/usr/lib/clang/21/include/float.h \
+  /Library/Developer/CommandLineTools/usr/lib/clang/21/include/inttypes.h \
   /Library/Developer/CommandLineTools/usr/lib/clang/21/include/limits.h \
   /Library/Developer/CommandLineTools/usr/lib/clang/21/include/ptrcheck.h \
   /Library/Developer/CommandLineTools/usr/lib/clang/21/include/stdarg.h \
   /Library/Developer/CommandLineTools/usr/lib/clang/21/include/stddef.h \
   /Library/Developer/CommandLineTools/usr/lib/clang/21/include/stdint.h \
   /Users/antoniomolina/Desktop/riscv-digital-twin/src/cpu.h \
-  /Users/antoniomolina/Desktop/riscv-digital-twin/src/memory.h
+  /Users/antoniomolina/Desktop/riscv-digital-twin/src/memory.h \
+  /opt/homebrew/include/SDL2/SDL.h \
+  /opt/homebrew/include/SDL2/SDL_assert.h \
+  /opt/homebrew/include/SDL2/SDL_atomic.h \
+  /opt/homebrew/include/SDL2/SDL_audio.h \
+  /opt/homebrew/include/SDL2/SDL_blendmode.h \
+  /opt/homebrew/include/SDL2/SDL_clipboard.h \
+  /opt/homebrew/include/SDL2/SDL_config.h \
+  /opt/homebrew/include/SDL2/SDL_config_macosx.h \
+  /opt/homebrew/include/SDL2/SDL_cpuinfo.h \
+  /opt/homebrew/include/SDL2/SDL_endian.h \
+  /opt/homebrew/include/SDL2/SDL_error.h \
+  /opt/homebrew/include/SDL2/SDL_events.h \
+  /opt/homebrew/include/SDL2/SDL_filesystem.h \
+  /opt/homebrew/include/SDL2/SDL_gamecontroller.h \
+  /opt/homebrew/include/SDL2/SDL_gesture.h \
+  /opt/homebrew/include/SDL2/SDL_guid.h \
+  /opt/homebrew/include/SDL2/SDL_haptic.h \
+  /opt/homebrew/include/SDL2/SDL_hidapi.h \
+  /opt/homebrew/include/SDL2/SDL_hints.h \
+  /opt/homebrew/include/SDL2/SDL_joystick.h \
+  /opt/homebrew/include/SDL2/SDL_keyboard.h \
+  /opt/homebrew/include/SDL2/SDL_keycode.h \
+  /opt/homebrew/include/SDL2/SDL_loadso.h \
+  /opt/homebrew/include/SDL2/SDL_locale.h \
+  /opt/homebrew/include/SDL2/SDL_log.h \
+  /opt/homebrew/include/SDL2/SDL_main.h \
+  /opt/homebrew/include/SDL2/SDL_messagebox.h \
+  /opt/homebrew/include/SDL2/SDL_metal.h \
+  /opt/homebrew/include/SDL2/SDL_misc.h \
+  /opt/homebrew/include/SDL2/SDL_mouse.h \
+  /opt/homebrew/include/SDL2/SDL_mutex.h \
+  /opt/homebrew/include/SDL2/SDL_pixels.h \
+  /opt/homebrew/include/SDL2/SDL_platform.h \
+  /opt/homebrew/include/SDL2/SDL_power.h \
+  /opt/homebrew/include/SDL2/SDL_quit.h \
+  /opt/homebrew/include/SDL2/SDL_rect.h \
+  /opt/homebrew/include/SDL2/SDL_render.h \
+  /opt/homebrew/include/SDL2/SDL_rwops.h \
+  /opt/homebrew/include/SDL2/SDL_scancode.h \
+  /opt/homebrew/include/SDL2/SDL_sensor.h \
+  /opt/homebrew/include/SDL2/SDL_shape.h \
+  /opt/homebrew/include/SDL2/SDL_stdinc.h \
+  /opt/homebrew/include/SDL2/SDL_surface.h \
+  /opt/homebrew/include/SDL2/SDL_system.h \
+  /opt/homebrew/include/SDL2/SDL_thread.h \
+  /opt/homebrew/include/SDL2/SDL_timer.h \
+  /opt/homebrew/include/SDL2/SDL_touch.h \
+  /opt/homebrew/include/SDL2/SDL_version.h \
+  /opt/homebrew/include/SDL2/SDL_video.h \
+  /opt/homebrew/include/SDL2/begin_code.h \
+  /opt/homebrew/include/SDL2/close_code.h
 
 CMakeFiles/anvil_emu.dir/src/memory.cpp.o: /Users/antoniomolina/Desktop/riscv-digital-twin/src/memory.cpp \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/Availability.h \
@@ -2477,8 +2543,6 @@ CMakeFiles/anvil_emu.dir/src/memory.cpp.o: /Users/antoniomolina/Desktop/riscv-di
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__filesystem/perms.h:
 
-/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__filesystem/path.h:
-
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__filesystem/filesystem_error.h:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__filesystem/file_type.h:
@@ -2494,6 +2558,88 @@ CMakeFiles/anvil_emu.dir/src/memory.cpp.o: /Users/antoniomolina/Desktop/riscv-di
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__filesystem/copy_options.h:
 
 /Users/antoniomolina/Desktop/riscv-digital-twin/src/memory.cpp:
+
+/opt/homebrew/include/SDL2/close_code.h:
+
+/opt/homebrew/include/SDL2/begin_code.h:
+
+/opt/homebrew/include/SDL2/SDL_video.h:
+
+/opt/homebrew/include/SDL2/SDL_timer.h:
+
+/opt/homebrew/include/SDL2/SDL_system.h:
+
+/opt/homebrew/include/SDL2/SDL_sensor.h:
+
+/opt/homebrew/include/SDL2/SDL_rwops.h:
+
+/opt/homebrew/include/SDL2/SDL_render.h:
+
+/opt/homebrew/include/SDL2/SDL_rect.h:
+
+/opt/homebrew/include/SDL2/SDL_power.h:
+
+/opt/homebrew/include/SDL2/SDL_mouse.h:
+
+/opt/homebrew/include/SDL2/SDL_misc.h:
+
+/opt/homebrew/include/SDL2/SDL_metal.h:
+
+/opt/homebrew/include/SDL2/SDL_main.h:
+
+/opt/homebrew/include/SDL2/SDL_locale.h:
+
+/opt/homebrew/include/SDL2/SDL_loadso.h:
+
+/opt/homebrew/include/SDL2/SDL_keycode.h:
+
+/opt/homebrew/include/SDL2/SDL_hidapi.h:
+
+/opt/homebrew/include/SDL2/SDL_haptic.h:
+
+/opt/homebrew/include/SDL2/SDL_guid.h:
+
+/opt/homebrew/include/SDL2/SDL_filesystem.h:
+
+/opt/homebrew/include/SDL2/SDL_config_macosx.h:
+
+/opt/homebrew/include/SDL2/SDL_config.h:
+
+/opt/homebrew/include/SDL2/SDL_log.h:
+
+/opt/homebrew/include/SDL2/SDL_clipboard.h:
+
+/opt/homebrew/include/SDL2/SDL_blendmode.h:
+
+/opt/homebrew/include/SDL2/SDL_audio.h:
+
+/opt/homebrew/include/SDL2/SDL_atomic.h:
+
+/opt/homebrew/include/SDL2/SDL_assert.h:
+
+/opt/homebrew/include/SDL2/SDL.h:
+
+/Library/Developer/CommandLineTools/usr/lib/clang/21/include/inttypes.h:
+
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__filesystem/path.h:
+
+/Library/Developer/CommandLineTools/usr/lib/clang/21/include/float.h:
+
+/Library/Developer/CommandLineTools/usr/lib/clang/21/include/arm_neon.h:
+
+/Library/Developer/CommandLineTools/usr/lib/clang/21/include/arm_bf16.h:
+
+/Library/Developer/CommandLineTools/usr/lib/clang/21/include/__float_infinity_nan.h:
+
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/xlocale/_inttypes.h:
+
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/inttypes.h:
+
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/float.h:
+
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/_inttypes.h:
+
+/Library/Developer/CommandLineTools/usr/lib/clang/21/include/__float_float.h:
 
 /Users/antoniomolina/Desktop/riscv-digital-twin/src/main.cpp:
 
@@ -2563,6 +2709,8 @@ CMakeFiles/anvil_emu.dir/src/memory.cpp.o: /Users/antoniomolina/Desktop/riscv-di
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/sys/_types/_uid_t.h:
 
+/opt/homebrew/include/SDL2/SDL_surface.h:
+
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/sys/_types/_in_addr_t.h:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__mutex/mutex.h:
@@ -2626,6 +2774,8 @@ CMakeFiles/anvil_emu.dir/src/memory.cpp.o: /Users/antoniomolina/Desktop/riscv-di
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/sys/_types/_id_t.h:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/sys/_types/_gid_t.h:
+
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/float.h:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/sys/_types/_fsfilcnt_t.h:
 
@@ -2754,6 +2904,8 @@ CMakeFiles/anvil_emu.dir/src/memory.cpp.o: /Users/antoniomolina/Desktop/riscv-di
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/format:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/ctype.h:
+
+/opt/homebrew/include/SDL2/SDL_gamecontroller.h:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/errno.h:
 
@@ -3039,6 +3191,8 @@ CMakeFiles/anvil_emu.dir/src/memory.cpp.o: /Users/antoniomolina/Desktop/riscv-di
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__type_traits/common_reference.h:
 
+/opt/homebrew/include/SDL2/SDL_thread.h:
+
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__type_traits/alignment_of.h:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__atomic/atomic_flag.h:
@@ -3165,6 +3319,8 @@ CMakeFiles/anvil_emu.dir/src/memory.cpp.o: /Users/antoniomolina/Desktop/riscv-di
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__random/uniform_int_distribution.h:
 
+/opt/homebrew/include/SDL2/SDL_pixels.h:
+
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__random/log2.h:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/sys/stdio.h:
@@ -3287,6 +3443,8 @@ CMakeFiles/anvil_emu.dir/src/memory.cpp.o: /Users/antoniomolina/Desktop/riscv-di
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/arm/_endian.h:
 
+/opt/homebrew/include/SDL2/SDL_platform.h:
+
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/limits:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__memory/inout_ptr.h:
@@ -3340,6 +3498,8 @@ CMakeFiles/anvil_emu.dir/src/memory.cpp.o: /Users/antoniomolina/Desktop/riscv-di
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__algorithm/clamp.h:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__iterator/readable_traits.h:
+
+/opt/homebrew/include/SDL2/SDL_cpuinfo.h:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__iterator/ranges_iterator_traits.h:
 
@@ -3439,6 +3599,8 @@ CMakeFiles/anvil_emu.dir/src/memory.cpp.o: /Users/antoniomolina/Desktop/riscv-di
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__fwd/sstream.h:
 
+/opt/homebrew/include/SDL2/SDL_version.h:
+
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__fwd/queue.h:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/sys/_types/_time_t.h:
@@ -3465,6 +3627,8 @@ CMakeFiles/anvil_emu.dir/src/memory.cpp.o: /Users/antoniomolina/Desktop/riscv-di
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__iterator/reverse_access.h:
 
+/opt/homebrew/include/SDL2/SDL_events.h:
+
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__concepts/totally_ordered.h:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__fwd/fstream.h:
@@ -3478,6 +3642,8 @@ CMakeFiles/anvil_emu.dir/src/memory.cpp.o: /Users/antoniomolina/Desktop/riscv-di
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/runetype.h:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/_locale.h:
+
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/TargetConditionals.h:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__tuple/tuple_indices.h:
 
@@ -3565,6 +3731,8 @@ CMakeFiles/anvil_emu.dir/src/memory.cpp.o: /Users/antoniomolina/Desktop/riscv-di
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__type_traits/is_standard_layout.h:
 
+/opt/homebrew/include/SDL2/SDL_shape.h:
+
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/sys/_types/_off_t.h:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__algorithm/move.h:
@@ -3627,6 +3795,8 @@ CMakeFiles/anvil_emu.dir/src/memory.cpp.o: /Users/antoniomolina/Desktop/riscv-di
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__concepts/boolean_testable.h:
 
+/Library/Developer/CommandLineTools/usr/lib/clang/21/include/__float_header_macro.h:
+
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__functional/binary_function.h:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__concepts/arithmetic.h:
@@ -3655,6 +3825,8 @@ CMakeFiles/anvil_emu.dir/src/memory.cpp.o: /Users/antoniomolina/Desktop/riscv-di
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__charconv/to_chars_integral.h:
 
+/opt/homebrew/include/SDL2/SDL_error.h:
+
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/sys/_pthread/_pthread_mutex_t.h:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/_types/_nl_item.h:
@@ -3667,7 +3839,11 @@ CMakeFiles/anvil_emu.dir/src/memory.cpp.o: /Users/antoniomolina/Desktop/riscv-di
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__charconv/to_chars_base_10.h:
 
+/opt/homebrew/include/SDL2/SDL_hints.h:
+
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__math/inverse_trigonometric_functions.h:
+
+/opt/homebrew/include/SDL2/SDL_mutex.h:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__fwd/bit_reference.h:
 
@@ -3686,6 +3862,8 @@ CMakeFiles/anvil_emu.dir/src/memory.cpp.o: /Users/antoniomolina/Desktop/riscv-di
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/sys/resource.h:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__functional/binder1st.h:
+
+/opt/homebrew/include/SDL2/SDL_joystick.h:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__bit/blsr.h:
 
@@ -3775,6 +3953,8 @@ CMakeFiles/anvil_emu.dir/src/memory.cpp.o: /Users/antoniomolina/Desktop/riscv-di
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__algorithm/stable_sort.h:
 
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/inttypes.h:
+
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/AvailabilityInternalLegacy.h:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__algorithm/sort.h:
@@ -3783,9 +3963,13 @@ CMakeFiles/anvil_emu.dir/src/memory.cpp.o: /Users/antoniomolina/Desktop/riscv-di
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__ostream/basic_ostream.h:
 
+/opt/homebrew/include/SDL2/SDL_touch.h:
+
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__type_traits/is_bounded_array.h:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__functional/hash.h:
+
+/opt/homebrew/include/SDL2/SDL_keyboard.h:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/xlocale/_string.h:
 
@@ -3794,6 +3978,8 @@ CMakeFiles/anvil_emu.dir/src/memory.cpp.o: /Users/antoniomolina/Desktop/riscv-di
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__functional/binary_negate.h:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__algorithm/set_union.h:
+
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/AvailabilityMacros.h:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__memory/swap_allocator.h:
 
@@ -3864,6 +4050,8 @@ CMakeFiles/anvil_emu.dir/src/memory.cpp.o: /Users/antoniomolina/Desktop/riscv-di
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__algorithm/min.h:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/exception:
+
+/Library/Developer/CommandLineTools/usr/lib/clang/21/include/arm_vector_types.h:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__algorithm/swap_ranges.h:
 
@@ -3981,6 +4169,8 @@ CMakeFiles/anvil_emu.dir/src/memory.cpp.o: /Users/antoniomolina/Desktop/riscv-di
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__algorithm/for_each.h:
 
+/opt/homebrew/include/SDL2/SDL_quit.h:
+
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/__xlocale.h:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__algorithm/binary_search.h:
@@ -3993,9 +4183,13 @@ CMakeFiles/anvil_emu.dir/src/memory.cpp.o: /Users/antoniomolina/Desktop/riscv-di
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/sys/_types/_u_int8_t.h:
 
+/opt/homebrew/include/SDL2/SDL_messagebox.h:
+
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__algorithm/is_partitioned.h:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/sys/_types/_blkcnt_t.h:
+
+/opt/homebrew/include/SDL2/SDL_gesture.h:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/stdlib.h:
 
@@ -4043,6 +4237,10 @@ CMakeFiles/anvil_emu.dir/src/memory.cpp.o: /Users/antoniomolina/Desktop/riscv-di
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/_ctermid.h:
 
+/opt/homebrew/include/SDL2/SDL_scancode.h:
+
+/opt/homebrew/include/SDL2/SDL_endian.h:
+
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__type_traits/is_assignable.h:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/queue:
@@ -4058,6 +4256,8 @@ CMakeFiles/anvil_emu.dir/src/memory.cpp.o: /Users/antoniomolina/Desktop/riscv-di
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__type_traits/is_volatile.h:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__tuple/tuple_like_ext.h:
+
+/opt/homebrew/include/SDL2/SDL_stdinc.h:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/_time.h:
 

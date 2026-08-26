@@ -7,8 +7,10 @@
 
 Memory::Memory() {
     ram.resize(1024 * 1024, 0); 
+    vram.resize(320 * 240 * 4, 0);
     mtime = 0;
     mtimecmp = 0xFFFFFFFFFFFFFFFF; // Default alarm is "never"
+    current_key = 0;
 }
 
 uint32_t Memory::read32(uint32_t address) {
@@ -37,7 +39,17 @@ void Memory::write32(uint32_t address, uint32_t value) {
         return; 
     }
 
-    // Normal RAM write... (keep your existing code here)
+    // --- MMIO: Video RAM (0x04000000 to 0x0404AFFF) ---
+    if (address >= 0x04000000 && address < 0x0404B000) {
+        uint32_t offset = address - 0x04000000;
+        vram[offset]     = (value & 0x000000FF);
+        vram[offset + 1] = (value & 0x0000FF00) >> 8;
+        vram[offset + 2] = (value & 0x00FF0000) >> 16;
+        vram[offset + 3] = (value & 0xFF000000) >> 24;
+        return;
+    }
+    
+    // Normal RAM write
     if (address + 3 < ram.size()) {
         ram[address]     = (value & 0x000000FF);
         ram[address + 1] = (value & 0x0000FF00) >> 8;
@@ -47,6 +59,11 @@ void Memory::write32(uint32_t address, uint32_t value) {
 }
 
 uint8_t Memory::read8(uint32_t address) {
+    // --- MMIO: Keyboard ---
+    if (address == 0x03000000) {
+        return current_key;
+    }
+
     if (address < ram.size()) {
         return ram[address];
     }
@@ -55,6 +72,11 @@ uint8_t Memory::read8(uint32_t address) {
 }
 
 uint16_t Memory::read16(uint32_t address) {
+    // --- MMIO: Keyboard ---
+    if (address == 0x03000000) {
+        return current_key;
+    }
+    
     if (address + 1 < ram.size()) {
         return (uint16_t)(ram[address]) | ((uint16_t)(ram[address + 1]) << 8);
     }

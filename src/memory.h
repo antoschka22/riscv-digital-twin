@@ -5,10 +5,13 @@
 class Memory {
 public:
     std::vector<uint8_t> ram;
+    std::vector<uint8_t> vram;
     
     // Hardware Timer Registers (64-bit)
     uint64_t mtime;
     uint64_t mtimecmp;
+
+    uint8_t current_key;
 
     Memory();
     

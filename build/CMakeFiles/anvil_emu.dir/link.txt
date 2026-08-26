@@ -1,1 +1,1 @@
-/usr/bin/c++  -arch arm64 -Wl,-search_paths_first -Wl,-headerpad_max_install_names CMakeFiles/anvil_emu.dir/src/main.cpp.o CMakeFiles/anvil_emu.dir/src/cpu.cpp.o CMakeFiles/anvil_emu.dir/src/memory.cpp.o -o anvil_emu
+/usr/bin/c++  -arch arm64 -Wl,-search_paths_first -Wl,-headerpad_max_install_names CMakeFiles/anvil_emu.dir/src/main.cpp.o CMakeFiles/anvil_emu.dir/src/cpu.cpp.o CMakeFiles/anvil_emu.dir/src/memory.cpp.o -o anvil_emu  -Wl,-rpath,/opt/homebrew/lib /opt/homebrew/lib/libSDL2main.a /opt/homebrew/lib/libSDL2-2.0.0.dylib
