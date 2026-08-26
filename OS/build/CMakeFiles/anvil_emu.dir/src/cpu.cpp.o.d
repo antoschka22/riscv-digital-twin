@@ -1,6 +1,6 @@
 CMakeFiles/anvil_emu.dir/src/cpu.cpp.o: \
-  /Users/antoniomolina/Desktop/riscv-digital-twin/src/cpu.cpp \
-  /Users/antoniomolina/Desktop/riscv-digital-twin/src/cpu.h \
+  /Users/antoniomolina/Desktop/riscv-digital-twin/OS/src/cpu.cpp \
+  /Users/antoniomolina/Desktop/riscv-digital-twin/OS/src/cpu.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/cstdint \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__config \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__config_site \
@@ -667,7 +667,7 @@ CMakeFiles/anvil_emu.dir/src/cpu.cpp.o: \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__algorithm/pstl.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__algorithm/sample.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/bit \
-  /Users/antoniomolina/Desktop/riscv-digital-twin/src/memory.h \
+  /Users/antoniomolina/Desktop/riscv-digital-twin/OS/src/memory.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/vector \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__vector/comparison.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__algorithm/lexicographical_compare_three_way.h \

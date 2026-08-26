@@ -8,9 +8,9 @@ set(CMAKE_DEPENDS_LANGUAGES
 
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
-  "/Users/antoniomolina/Desktop/riscv-digital-twin/src/cpu.cpp" "CMakeFiles/anvil_emu.dir/src/cpu.cpp.o" "gcc" "CMakeFiles/anvil_emu.dir/src/cpu.cpp.o.d"
-  "/Users/antoniomolina/Desktop/riscv-digital-twin/src/main.cpp" "CMakeFiles/anvil_emu.dir/src/main.cpp.o" "gcc" "CMakeFiles/anvil_emu.dir/src/main.cpp.o.d"
-  "/Users/antoniomolina/Desktop/riscv-digital-twin/src/memory.cpp" "CMakeFiles/anvil_emu.dir/src/memory.cpp.o" "gcc" "CMakeFiles/anvil_emu.dir/src/memory.cpp.o.d"
+  "/Users/antoniomolina/Desktop/riscv-digital-twin/OS/src/cpu.cpp" "CMakeFiles/anvil_emu.dir/src/cpu.cpp.o" "gcc" "CMakeFiles/anvil_emu.dir/src/cpu.cpp.o.d"
+  "/Users/antoniomolina/Desktop/riscv-digital-twin/OS/src/main.cpp" "CMakeFiles/anvil_emu.dir/src/main.cpp.o" "gcc" "CMakeFiles/anvil_emu.dir/src/main.cpp.o.d"
+  "/Users/antoniomolina/Desktop/riscv-digital-twin/OS/src/memory.cpp" "CMakeFiles/anvil_emu.dir/src/memory.cpp.o" "gcc" "CMakeFiles/anvil_emu.dir/src/memory.cpp.o.d"
   )
 
 # Targets to which this target links which contain Fortran sources.

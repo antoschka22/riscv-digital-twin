@@ -1,6 +1,6 @@
 CMakeFiles/anvil_emu.dir/src/memory.cpp.o: \
-  /Users/antoniomolina/Desktop/riscv-digital-twin/src/memory.cpp \
-  /Users/antoniomolina/Desktop/riscv-digital-twin/src/memory.h \
+  /Users/antoniomolina/Desktop/riscv-digital-twin/OS/src/memory.cpp \
+  /Users/antoniomolina/Desktop/riscv-digital-twin/OS/src/memory.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/cstdint \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__config \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__config_site \

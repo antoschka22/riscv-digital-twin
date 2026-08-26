@@ -1,7 +1,7 @@
 {
 	"InstallScripts" : 
 	[
-		"/Users/antoniomolina/Desktop/riscv-digital-twin/build/cmake_install.cmake"
+		"/Users/antoniomolina/Desktop/riscv-digital-twin/OS/build/cmake_install.cmake"
 	],
 	"Parallel" : false
 }

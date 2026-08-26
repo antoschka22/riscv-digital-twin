@@ -53,10 +53,10 @@ RM = /opt/homebrew/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /Users/antoniomolina/Desktop/riscv-digital-twin
+CMAKE_SOURCE_DIR = /Users/antoniomolina/Desktop/riscv-digital-twin/OS
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /Users/antoniomolina/Desktop/riscv-digital-twin/build
+CMAKE_BINARY_DIR = /Users/antoniomolina/Desktop/riscv-digital-twin/OS/build
 
 # Include any dependencies generated for this target.
 include CMakeFiles/anvil_emu.dir/depend.make
@@ -73,46 +73,46 @@ CMakeFiles/anvil_emu.dir/codegen:
 .PHONY : CMakeFiles/anvil_emu.dir/codegen
 
 CMakeFiles/anvil_emu.dir/src/main.cpp.o: CMakeFiles/anvil_emu.dir/flags.make
-CMakeFiles/anvil_emu.dir/src/main.cpp.o: /Users/antoniomolina/Desktop/riscv-digital-twin/src/main.cpp
+CMakeFiles/anvil_emu.dir/src/main.cpp.o: /Users/antoniomolina/Desktop/riscv-digital-twin/OS/src/main.cpp
 CMakeFiles/anvil_emu.dir/src/main.cpp.o: CMakeFiles/anvil_emu.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/antoniomolina/Desktop/riscv-digital-twin/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/anvil_emu.dir/src/main.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/anvil_emu.dir/src/main.cpp.o -MF CMakeFiles/anvil_emu.dir/src/main.cpp.o.d -o CMakeFiles/anvil_emu.dir/src/main.cpp.o -c /Users/antoniomolina/Desktop/riscv-digital-twin/src/main.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/antoniomolina/Desktop/riscv-digital-twin/OS/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/anvil_emu.dir/src/main.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/anvil_emu.dir/src/main.cpp.o -MF CMakeFiles/anvil_emu.dir/src/main.cpp.o.d -o CMakeFiles/anvil_emu.dir/src/main.cpp.o -c /Users/antoniomolina/Desktop/riscv-digital-twin/OS/src/main.cpp
 
 CMakeFiles/anvil_emu.dir/src/main.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/anvil_emu.dir/src/main.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/antoniomolina/Desktop/riscv-digital-twin/src/main.cpp > CMakeFiles/anvil_emu.dir/src/main.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/antoniomolina/Desktop/riscv-digital-twin/OS/src/main.cpp > CMakeFiles/anvil_emu.dir/src/main.cpp.i
 
 CMakeFiles/anvil_emu.dir/src/main.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/anvil_emu.dir/src/main.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/antoniomolina/Desktop/riscv-digital-twin/src/main.cpp -o CMakeFiles/anvil_emu.dir/src/main.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/antoniomolina/Desktop/riscv-digital-twin/OS/src/main.cpp -o CMakeFiles/anvil_emu.dir/src/main.cpp.s
 
 CMakeFiles/anvil_emu.dir/src/cpu.cpp.o: CMakeFiles/anvil_emu.dir/flags.make
-CMakeFiles/anvil_emu.dir/src/cpu.cpp.o: /Users/antoniomolina/Desktop/riscv-digital-twin/src/cpu.cpp
+CMakeFiles/anvil_emu.dir/src/cpu.cpp.o: /Users/antoniomolina/Desktop/riscv-digital-twin/OS/src/cpu.cpp
 CMakeFiles/anvil_emu.dir/src/cpu.cpp.o: CMakeFiles/anvil_emu.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/antoniomolina/Desktop/riscv-digital-twin/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/anvil_emu.dir/src/cpu.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/anvil_emu.dir/src/cpu.cpp.o -MF CMakeFiles/anvil_emu.dir/src/cpu.cpp.o.d -o CMakeFiles/anvil_emu.dir/src/cpu.cpp.o -c /Users/antoniomolina/Desktop/riscv-digital-twin/src/cpu.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/antoniomolina/Desktop/riscv-digital-twin/OS/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/anvil_emu.dir/src/cpu.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/anvil_emu.dir/src/cpu.cpp.o -MF CMakeFiles/anvil_emu.dir/src/cpu.cpp.o.d -o CMakeFiles/anvil_emu.dir/src/cpu.cpp.o -c /Users/antoniomolina/Desktop/riscv-digital-twin/OS/src/cpu.cpp
 
 CMakeFiles/anvil_emu.dir/src/cpu.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/anvil_emu.dir/src/cpu.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/antoniomolina/Desktop/riscv-digital-twin/src/cpu.cpp > CMakeFiles/anvil_emu.dir/src/cpu.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/antoniomolina/Desktop/riscv-digital-twin/OS/src/cpu.cpp > CMakeFiles/anvil_emu.dir/src/cpu.cpp.i
 
 CMakeFiles/anvil_emu.dir/src/cpu.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/anvil_emu.dir/src/cpu.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/antoniomolina/Desktop/riscv-digital-twin/src/cpu.cpp -o CMakeFiles/anvil_emu.dir/src/cpu.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/antoniomolina/Desktop/riscv-digital-twin/OS/src/cpu.cpp -o CMakeFiles/anvil_emu.dir/src/cpu.cpp.s
 
 CMakeFiles/anvil_emu.dir/src/memory.cpp.o: CMakeFiles/anvil_emu.dir/flags.make
-CMakeFiles/anvil_emu.dir/src/memory.cpp.o: /Users/antoniomolina/Desktop/riscv-digital-twin/src/memory.cpp
+CMakeFiles/anvil_emu.dir/src/memory.cpp.o: /Users/antoniomolina/Desktop/riscv-digital-twin/OS/src/memory.cpp
 CMakeFiles/anvil_emu.dir/src/memory.cpp.o: CMakeFiles/anvil_emu.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/antoniomolina/Desktop/riscv-digital-twin/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/anvil_emu.dir/src/memory.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/anvil_emu.dir/src/memory.cpp.o -MF CMakeFiles/anvil_emu.dir/src/memory.cpp.o.d -o CMakeFiles/anvil_emu.dir/src/memory.cpp.o -c /Users/antoniomolina/Desktop/riscv-digital-twin/src/memory.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/antoniomolina/Desktop/riscv-digital-twin/OS/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/anvil_emu.dir/src/memory.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/anvil_emu.dir/src/memory.cpp.o -MF CMakeFiles/anvil_emu.dir/src/memory.cpp.o.d -o CMakeFiles/anvil_emu.dir/src/memory.cpp.o -c /Users/antoniomolina/Desktop/riscv-digital-twin/OS/src/memory.cpp
 
 CMakeFiles/anvil_emu.dir/src/memory.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/anvil_emu.dir/src/memory.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/antoniomolina/Desktop/riscv-digital-twin/src/memory.cpp > CMakeFiles/anvil_emu.dir/src/memory.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/antoniomolina/Desktop/riscv-digital-twin/OS/src/memory.cpp > CMakeFiles/anvil_emu.dir/src/memory.cpp.i
 
 CMakeFiles/anvil_emu.dir/src/memory.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/anvil_emu.dir/src/memory.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/antoniomolina/Desktop/riscv-digital-twin/src/memory.cpp -o CMakeFiles/anvil_emu.dir/src/memory.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/antoniomolina/Desktop/riscv-digital-twin/OS/src/memory.cpp -o CMakeFiles/anvil_emu.dir/src/memory.cpp.s
 
 # Object files for target anvil_emu
 anvil_emu_OBJECTS = \
@@ -130,7 +130,7 @@ anvil_emu: CMakeFiles/anvil_emu.dir/build.make
 anvil_emu: /opt/homebrew/lib/libSDL2main.a
 anvil_emu: /opt/homebrew/lib/libSDL2-2.0.0.dylib
 anvil_emu: CMakeFiles/anvil_emu.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/Users/antoniomolina/Desktop/riscv-digital-twin/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Linking CXX executable anvil_emu"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/Users/antoniomolina/Desktop/riscv-digital-twin/OS/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Linking CXX executable anvil_emu"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/anvil_emu.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.
@@ -142,6 +142,6 @@ CMakeFiles/anvil_emu.dir/clean:
 .PHONY : CMakeFiles/anvil_emu.dir/clean
 
 CMakeFiles/anvil_emu.dir/depend:
-	cd /Users/antoniomolina/Desktop/riscv-digital-twin/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /Users/antoniomolina/Desktop/riscv-digital-twin /Users/antoniomolina/Desktop/riscv-digital-twin /Users/antoniomolina/Desktop/riscv-digital-twin/build /Users/antoniomolina/Desktop/riscv-digital-twin/build /Users/antoniomolina/Desktop/riscv-digital-twin/build/CMakeFiles/anvil_emu.dir/DependInfo.cmake "--color=$(COLOR)" anvil_emu
+	cd /Users/antoniomolina/Desktop/riscv-digital-twin/OS/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /Users/antoniomolina/Desktop/riscv-digital-twin/OS /Users/antoniomolina/Desktop/riscv-digital-twin/OS /Users/antoniomolina/Desktop/riscv-digital-twin/OS/build /Users/antoniomolina/Desktop/riscv-digital-twin/OS/build /Users/antoniomolina/Desktop/riscv-digital-twin/OS/build/CMakeFiles/anvil_emu.dir/DependInfo.cmake "--color=$(COLOR)" anvil_emu
 .PHONY : CMakeFiles/anvil_emu.dir/depend
 
