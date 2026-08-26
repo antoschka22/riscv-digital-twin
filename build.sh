@@ -5,10 +5,9 @@ set -e
 
 cd test_firmware
 echo "Compiling assembly..."
-riscv64-elf-gcc -march=rv32i -mabi=ilp32 -c test.s -o test.o
-
+riscv64-elf-gcc -march=rv32i_zicsr -mabi=ilp32 -O0 -ffreestanding -nostdlib -T linker.ld crt0.s trap.s main.c -o firmware.elf
 echo "Creating binary..."
-riscv64-elf-objcopy -O binary test.o firmware.bin
+riscv64-elf-objcopy -O binary firmware.elf firmware.bin
 cd ..
 
 echo "Running CMake..."

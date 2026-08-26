@@ -4,8 +4,11 @@
 
 class Memory {
 public:
-    // 1MB of RAM
     std::vector<uint8_t> ram;
+    
+    // Hardware Timer Registers (64-bit)
+    uint64_t mtime;
+    uint64_t mtimecmp;
 
     Memory();
     

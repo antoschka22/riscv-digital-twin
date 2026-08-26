@@ -1,6 +1,7 @@
 #include "cpu.h"
 #include <iostream>
 #include <cstdint>
+#include <iomanip>
 
 CPU::CPU(Memory* memory_instance) {
     mem = memory_instance;
@@ -9,6 +10,11 @@ CPU::CPU(Memory* memory_instance) {
     // Initialize all registers to 0
     for(int i = 0; i < 32; i++) {
         regs[i] = 0;
+    }
+
+    // Initialize all CSRs to 0
+    for(int i = 0; i < 4096; i++) {
+        csrs[i] = 0;
     }
 }
 
@@ -23,27 +29,47 @@ void CPU::write_csr(uint16_t addr, uint32_t value) {
     csrs[addr] = value;
 }
 
+// Update your trap function to disable interrupts when entering a trap!
 void CPU::trap(uint32_t cause, uint32_t tval) {
-    // Save the current PC (so the OS knows where to return)
-    write_csr(CSR_MEPC, pc);
+    write_csr(0x341, pc);    // CSR_MEPC
+    write_csr(0x342, cause); // CSR_MCAUSE
+    write_csr(0x343, tval);  // CSR_MTVAL
     
-    // Save the cause of the trap (11 = Environment call from M-mode)
-    write_csr(CSR_MCAUSE, cause);
+    // Disable interrupts by clearing MIE (bit 3) in mstatus (0x300)
+    uint32_t mstatus = read_csr(0x300);
+    write_csr(0x300, mstatus & ~(1 << 3)); 
     
-    // Save trap value (e.g., faulting address, optional but helpful)
-    write_csr(CSR_MTVAL, tval);
-    
-    // Jump to the OS trap handler. 
-    // The lowest 2 bits of mtvec define the mode (Direct vs Vectored). 
-    // We mask them out to get the base address.
-    uint32_t mtvec = read_csr(CSR_MTVEC);
+    uint32_t mtvec = read_csr(0x305); // CSR_MTVEC
     pc = mtvec & ~0x3; 
 }
 
 bool CPU::step() {
+    mem->mtime++;
+
+    // 1. Update the Timer Interrupt Pending (MTIP) bit in the mip register (CSR 0x344)
+    if (mem->mtime >= mem->mtimecmp) {
+        csrs[0x344] |= (1 << 7); // Set MTIP
+    } else {
+        csrs[0x344] &= ~(1 << 7); // Clear MTIP
+    }
+
+    // 2. Check if we should trap
+    bool global_interrupt_enable = (csrs[0x300] & (1 << 3)) != 0; // mstatus.MIE
+    bool timer_interrupt_enable  = (csrs[0x304] & (1 << 7)) != 0; // mie.MTIE
+    bool timer_interrupt_pending = (csrs[0x344] & (1 << 7)) != 0; // mip.MTIP
+
+    if (global_interrupt_enable && timer_interrupt_enable && timer_interrupt_pending) {
+        std::cout << "\n[HARDWARE] Timer Interrupt Fired! Ripping control away from C code..." << std::endl;
+        trap(0x80000007, 0); 
+        return true; 
+    }
+
     uint32_t instruction = mem->read32(pc);
-    uint32_t opcode = instruction & 0x7F;
     
+    // DEBUG:
+    //std::cout << "Executing PC: 0x" << std::hex << pc << " | Instruction: 0x" << std::setfill('0') << std::setw(8) << instruction << std::endl;
+
+    uint32_t opcode = instruction & 0x7F;    
     // Core instruction format fields
     uint32_t rd     = (instruction >> 7)  & 0x1F;
     uint32_t funct3 = (instruction >> 12) & 0x07;
@@ -406,13 +432,19 @@ bool CPU::step() {
                             return true; 
                             
                         } else if (instruction == 0x00100073) {
-                            // EBREAK: Trigger a trap with cause 3 (Breakpoint)
-                            trap(3, pc);
-                            return true;
+                            // EBREAK: Tell the C++ while loop in main.cpp to stop
+                            std::cout << "\nProgram finished (EBREAK). Halting CPU." << std::endl;
+                            return false;
                             
                         } else if (instruction == 0x30200073) {
                             // MRET: Return from OS trap handler
-                            pc = read_csr(CSR_MEPC);
+                            pc = read_csr(0x341); // CSR_MEPC (Return to where we left off)
+                            
+                            // Re-enable interrupts (MIE bit) when leaving the trap!
+                            uint32_t mstatus = read_csr(0x300);
+                            write_csr(0x300, mstatus | (1 << 3)); 
+                            // ---------------------------
+                            
                             return true; 
                         } else {
                             trap(2, instruction); //Illegal Instruction
@@ -486,4 +518,31 @@ bool CPU::step() {
             return true; 
     }
     return true;
+}
+
+void CPU::dump_registers() {
+    // Standard RISC-V ABI register names
+    const char* abi_names[] = {
+        "zero", "ra", "sp", "gp", "tp", "t0", "t1", "t2",
+        "s0", "s1", "a0", "a1", "a2", "a3", "a4", "a5",
+        "a6", "a7", "s2", "s3", "s4", "s5", "s6", "s7",
+        "s8", "s9", "s10", "s11", "t3", "t4", "t5", "t6"
+    };
+
+    std::cout << "\n--- CPU Register State ---" << std::endl;
+    for (int i = 0; i < 32; i++) {
+        // Print format: x00 (zero) : 0x00000000
+        std::cout << "x" << std::setfill('0') << std::setw(2) << std::dec << i 
+                  << " (" << std::setfill(' ') << std::setw(4) << abi_names[i] << ") : "
+                  << "0x" << std::setfill('0') << std::setw(8) << std::hex << regs[i];
+                  
+        // Print 4 registers per row
+        if ((i + 1) % 4 == 0) {
+            std::cout << std::endl;
+        } else {
+            std::cout << "   |   ";
+        }
+    }
+    std::cout << "PC         : 0x" << std::setfill('0') << std::setw(8) << std::hex << pc << std::endl;
+    std::cout << "--------------------------\n" << std::endl;
 }

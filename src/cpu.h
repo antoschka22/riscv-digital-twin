@@ -15,9 +15,7 @@ private:
     uint32_t regs[32]; // x0 to x31
     uint32_t pc;       // Program Counter
     Memory* mem;       // Pointer to the system bus/memory
-    
-    // --- NEW: CSR Storage ---
-    std::unordered_map<uint16_t, uint32_t> csrs;
+    uint32_t csrs[4096]; // RISC-V has a 12-bit CSR address space
 
     // CSR access helpers
     uint32_t read_csr(uint16_t addr);
