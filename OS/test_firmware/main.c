@@ -6,6 +6,8 @@ volatile uint8_t* KEYBOARD = (volatile uint8_t*)0x03000000;
 volatile uint8_t* UART_TX = (volatile uint8_t*)0x10000000;
 volatile uint32_t* MTIME_LOW = (volatile uint32_t*)0x0200BFF8;
 volatile uint32_t* MTIMECMP_LOW = (volatile uint32_t*)0x02004000;
+// ADDED: The High 32-bits of the timer
+volatile uint32_t* MTIMECMP_HIGH = (volatile uint32_t*)0x02004004; 
 
 const int SCREEN_WIDTH = 320;
 const int SCREEN_HEIGHT = 240;
@@ -66,21 +68,21 @@ void task_monitor() {
     int heartbeat = 0;
     while (1) {
         print_str("[OS] Background Task Heartbeat: ");
-        // Print a simple ASCII ticker
         *UART_TX = '0' + (heartbeat % 10);
         print_str("\n");
         
         heartbeat++;
         
-        // Delay so it doesn't flood the terminal instantly
         for(volatile int d = 0; d < 50000; d++); 
     }
 }
 
 // --- OS Kernel ---
 void os_scheduler() {
-    // Give each task 10,000 cycles to run before swapping
     *MTIMECMP_LOW = *MTIME_LOW + 10000; 
+    *MTIMECMP_HIGH = 0;
+
+    __asm__ volatile ("csrc 0x344, %0" : : "r"(1 << 7));
 
     task_idx = (task_idx + 1) % 2;
     current_tcb = &tasks[task_idx]; 
@@ -105,11 +107,11 @@ int main() {
     current_tcb = &tasks[0];
 
     *MTIMECMP_LOW = *MTIME_LOW + 10000;
-    // Enable timer interrupts
+    *MTIMECMP_HIGH = 0; // FIX: Clear the upper 32 bits!
+    
     __asm__ volatile ("csrs mstatus, %0" : : "r"(1 << 3));
     __asm__ volatile ("csrs mie, %0" : : "r"(1 << 7));
 
-    // Jump to Task 0 (Game)
     __asm__ volatile (
         "lw sp, %0 \n"
         "lw t0, 124(sp) \n"
