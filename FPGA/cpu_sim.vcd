@@ -1,5 +1,5 @@
 $date
-	Fri Aug 28 18:11:07 2026
+	Mon Aug 31 04:56:27 2026
 $end
 $version
 	Icarus Verilog
@@ -9,47 +9,64 @@ $timescale
 $end
 $scope module cpu_tb $end
 $var reg 1 ! clk $end
-$var reg 32 " instruction [31:0] $end
+$var reg 1 " rst $end
 $scope module uut $end
 $var wire 1 ! clk $end
-$var wire 32 # instruction [31:0] $end
+$var wire 1 " rst $end
+$var wire 1 # take_branch $end
 $var wire 5 $ rs2 [4:0] $end
 $var wire 5 % rs1 [4:0] $end
 $var wire 1 & reg_write $end
 $var wire 32 ' read_data2 [31:0] $end
 $var wire 32 ( read_data1 [31:0] $end
 $var wire 5 ) rd [4:0] $end
-$var wire 32 * imm_i [31:0] $end
-$var wire 1 + alu_zero $end
-$var wire 1 , alu_src $end
-$var wire 32 - alu_result [31:0] $end
-$var wire 32 . alu_input_b [31:0] $end
-$var wire 4 / alu_ctrl [3:0] $end
+$var wire 32 * pc_next [31:0] $end
+$var wire 32 + pc_current [31:0] $end
+$var wire 32 , instruction [31:0] $end
+$var wire 32 - imm_i [31:0] $end
+$var wire 32 . imm_b [31:0] $end
+$var wire 1 / branch $end
+$var wire 1 0 alu_zero $end
+$var wire 1 1 alu_src $end
+$var wire 32 2 alu_result [31:0] $end
+$var wire 32 3 alu_input_b [31:0] $end
+$var wire 4 4 alu_ctrl [3:0] $end
 $scope module alu_inst $end
-$var wire 32 0 b [31:0] $end
-$var wire 1 + zero $end
-$var wire 4 1 alu_ctrl [3:0] $end
-$var wire 32 2 a [31:0] $end
-$var reg 32 3 result [31:0] $end
+$var wire 32 5 b [31:0] $end
+$var wire 1 0 zero $end
+$var wire 4 6 alu_ctrl [3:0] $end
+$var wire 32 7 a [31:0] $end
+$var reg 32 8 result [31:0] $end
 $upscope $end
 $scope module ctrl $end
-$var wire 32 4 instr [31:0] $end
-$var wire 7 5 opcode [6:0] $end
-$var wire 7 6 funct7 [6:0] $end
-$var wire 3 7 funct3 [2:0] $end
-$var reg 4 8 alu_ctrl [3:0] $end
-$var reg 1 , alu_src $end
+$var wire 7 9 opcode [6:0] $end
+$var wire 32 : instr [31:0] $end
+$var wire 7 ; funct7 [6:0] $end
+$var wire 3 < funct3 [2:0] $end
+$var reg 4 = alu_ctrl [3:0] $end
+$var reg 1 1 alu_src $end
+$var reg 1 / branch $end
 $var reg 1 & reg_write $end
+$upscope $end
+$scope module pc_reg $end
+$var wire 1 ! clk $end
+$var wire 32 > pc_next [31:0] $end
+$var wire 1 " rst $end
+$var reg 32 ? pc [31:0] $end
 $upscope $end
 $scope module reg_file $end
 $var wire 1 ! clk $end
-$var wire 5 9 rd [4:0] $end
-$var wire 5 : rs1 [4:0] $end
-$var wire 5 ; rs2 [4:0] $end
+$var wire 5 @ rd [4:0] $end
+$var wire 5 A rs1 [4:0] $end
+$var wire 5 B rs2 [4:0] $end
 $var wire 1 & we $end
-$var wire 32 < write_data [31:0] $end
-$var wire 32 = read_data2 [31:0] $end
-$var wire 32 > read_data1 [31:0] $end
+$var wire 32 C write_data [31:0] $end
+$var wire 32 D read_data2 [31:0] $end
+$var wire 32 E read_data1 [31:0] $end
+$upscope $end
+$scope module rom $end
+$var wire 32 F instr [31:0] $end
+$var wire 32 G pc [31:0] $end
 $upscope $end
 $upscope $end
 $upscope $end
@@ -59,110 +76,162 @@ $dumpall
 $end
 #0
 $dumpvars
-b0 >
+b0 G
+b110010000000000000010010011 F
+b0 E
+bx D
+b1100100 C
+b100 B
+b0 A
+b1 @
+b0 ?
+b100 >
 b0 =
 b0 <
-b0 ;
-b0 :
-b0 9
-b0 8
+b11 ;
+b110010000000000000010010011 :
+b10011 9
+b1100100 8
 b0 7
 b0 6
-b0 5
+b1100100 5
 b0 4
-b0 3
-b0 2
-b0 1
-b0 0
-b0 /
-b0 .
-b0 -
-0,
-1+
-b0 *
-b0 )
+b1100100 3
+b1100100 2
+11
+00
+0/
+b100001100000 .
+b1100100 -
+b110010000000000000010010011 ,
+b0 +
+b100 *
+b1 )
 b0 (
-b0 '
-0&
+bx '
+1&
 b0 %
-b0 $
-b0 #
-b0 "
+b100 $
+0#
+1"
 0!
 $end
 #5000
 1!
 #10000
-0+
-b1111 -
-b1111 3
-b1111 <
-b1111 .
-b1111 0
-bx '
-bx =
-b1111 *
-1,
-1&
-b1111 $
-b1111 ;
-b1 )
-b1 9
-b10011 5
 0!
-b111100000000000010010011 "
-b111100000000000010010011 #
-b111100000000000010010011 4
+0"
 #15000
+b1 2
+b1 8
+b1 C
+b1 3
+b1 5
+b1100100 '
+b1100100 D
+b10 .
+11
+1&
+b1 -
+b0 ;
+b10 )
+b10 @
+b1 $
+b1 B
+b100000000000100010011 ,
+b100000000000100010011 :
+b100000000000100010011 F
+b1000 *
+b1000 >
+b100 +
+b100 ?
+b100 G
 1!
 #20000
-b11001 -
-b11001 3
-b11001 <
-b1010 .
-b1010 0
-b1111 (
-b1111 2
-b1111 >
-b1010 *
-b1 %
-b1 :
-b1010 $
-b1010 ;
-b10 )
-b10 9
 0!
-b101000001000000100010011 "
-b101000001000000100010011 #
-b101000001000000100010011 4
 #25000
+b1 '
+b1 D
+b1100101 2
+b1100101 8
+b1100101 C
+b0 .
+01
+0&
+b10 -
+b1100100 (
+b1100100 7
+b1100100 E
+b10 <
+b100011 9
+b0 )
+b0 @
+b10 $
+b10 B
+b1 %
+b1 A
+b1000001010000000100011 ,
+b1000001010000000100011 :
+b1000001010000000100011 F
+b1100 *
+b1100 >
+b1000 +
+b1000 ?
+b1000 G
 1!
 #30000
-0+
-b101000 -
-b101000 3
-b101000 <
-b11001 '
-b11001 =
-b11001 .
-b11001 0
-b10 *
-0,
-1&
-b10 $
-b10 ;
-b11 )
-b11 9
-b110011 5
 0!
-b1000001000000110110011 "
-b1000001000000110110011 #
-b1000001000000110110011 4
 #35000
+b1100100 2
+b1100100 8
+b1100100 C
+b0 3
+b0 5
+b0 -
+b0 '
+b0 D
+b0 $
+b0 B
+b1010000000100011 ,
+b1010000000100011 :
+b1010000000100011 F
+b10000 *
+b10000 >
+b1100 +
+b1100 ?
+b1100 G
 1!
 #40000
 0!
 #45000
+1#
+10
+b0 2
+b0 8
+b0 C
+b1 4
+b1 6
+b1 =
+1/
+b0 (
+b0 7
+b0 E
+b0 <
+b1100011 9
+b0 %
+b0 A
+b1100011 ,
+b1100011 :
+b1100011 F
+b10000 *
+b10000 >
+b10000 +
+b10000 ?
+b10000 G
 1!
 #50000
+0!
+#55000
+1!
+#60000
 0!

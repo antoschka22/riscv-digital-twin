@@ -1,0 +1,13 @@
+// Clock and Reset
+IO_LOC "clk" 4;
+IO_PORT "clk" PULL_MODE=UP;
+IO_LOC "rst" 88;
+IO_PORT "rst" PULL_MODE=UP;
+
+// LED Pin (Onboard LED array)
+IO_LOC "led_pin" 15;
+IO_PORT "led_pin" DRIVE=8;
+
+// UART TX Pin mapping to the BL616 USB-Serial bridge
+IO_LOC "uart_tx_pin" 69;
+IO_PORT "uart_tx_pin" IO_TYPE=LVCMOS33;
