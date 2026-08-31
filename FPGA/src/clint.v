@@ -1,4 +1,3 @@
-// clint.v
 module clint(
     input  wire        clk,
     input  wire        rst,

@@ -1,13 +1,27 @@
-// Clock and Reset
-IO_LOC "clk" 4;
-IO_PORT "clk" PULL_MODE=UP;
-IO_LOC "rst" 88;
-IO_PORT "rst" PULL_MODE=UP;
+// Clock Input
+IO_LOC "clk_27m" 4;
+IO_PORT "clk_27m" PULL_MODE=UP;
 
-// LED Pin (Onboard LED array)
-IO_LOC "led_pin" 15;
-IO_PORT "led_pin" DRIVE=8;
+// HDMI Clock Pins
+IO_LOC "tmds_clk_p" 33;
+IO_PORT "tmds_clk_p" PULL_MODE=NONE DRIVE=8;
+IO_LOC "tmds_clk_n" 34;
+IO_PORT "tmds_clk_n" PULL_MODE=NONE DRIVE=8;
 
-// UART TX Pin mapping to the BL616 USB-Serial bridge
-IO_LOC "uart_tx_pin" 69;
-IO_PORT "uart_tx_pin" IO_TYPE=LVCMOS33;
+// HDMI Data Channel 0 (Blue)
+IO_LOC "tmds_d_p[0]" 35;
+IO_PORT "tmds_d_p[0]" PULL_MODE=NONE DRIVE=8;
+IO_LOC "tmds_d_n[0]" 36;
+IO_PORT "tmds_d_n[0]" PULL_MODE=NONE DRIVE=8;
+
+// HDMI Data Channel 1 (Green)
+IO_LOC "tmds_d_p[1]" 37;
+IO_PORT "tmds_d_p[1]" PULL_MODE=NONE DRIVE=8;
+IO_LOC "tmds_d_n[1]" 38;
+IO_PORT "tmds_d_n[1]" PULL_MODE=NONE DRIVE=8;
+
+// HDMI Data Channel 2 (Red)
+IO_LOC "tmds_d_p[2]" 39;
+IO_PORT "tmds_d_p[2]" PULL_MODE=NONE DRIVE=8;
+IO_LOC "tmds_d_n[2]" 40;
+IO_PORT "tmds_d_n[2]" PULL_MODE=NONE DRIVE=8;

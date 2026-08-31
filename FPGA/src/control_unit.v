@@ -4,8 +4,10 @@ module control_unit(
     output reg         reg_write,
     output reg         alu_src,
     output reg         branch,
-    output reg         mem_write,  // NEW: 1 = Write to RAM
-    output reg         result_src  // NEW: 0 = ALU Result, 1 = RAM Read Data
+    output reg         mem_write,  
+    output reg         result_src 
+    output reg         csr_we,
+    output reg         is_mret
 );
 
     wire [6:0] opcode = instr[6:0];
@@ -20,6 +22,8 @@ module control_unit(
         mem_write  = 1'b0;
         result_src = 1'b0;
         alu_ctrl   = 4'b0000;
+        csr_we = 1'b0
+        is_mret = 1'b0;
 
         case(opcode)
             7'b0110011: begin // R-Type (ADD, SUB)
@@ -46,10 +50,19 @@ module control_unit(
                 alu_ctrl   = 4'b0000; // ADD
             end
 
-            7'b0100011: begin // NEW: S-Type (Store Word)
+            7'b0100011: begin // S-Type (Store Word)
                 alu_src   = 1'b1;  // Add Immediate to rs1 to get memory address
                 mem_write = 1'b1;  // Turn on RAM write
                 alu_ctrl  = 4'b0000; // ADD
+            end
+
+            7'b1110011: begin // SYSTEM (CSRs and MRET)
+                if (funct3 == 3'b000 && instr[31:20] == 12'h302) begin
+                    is_mret = 1'b1; // This is the MRET instruction!
+                end else begin
+                    csr_we    = 1'b1; // This is a CSR write (e.g., CSRRW)
+                    reg_write = 1'b1; // Save old CSR value to rd
+                end
             end
         endcase
     end
