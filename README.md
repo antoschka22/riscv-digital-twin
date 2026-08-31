@@ -1,3 +1,4 @@
+``` mermaid
 flowchart LR
     %% Styling
     classDef core fill:#2d3436,stroke:#74b9ff,stroke-width:2px,color:#fff
@@ -54,3 +55,4 @@ flowchart LR
     VRAM --> |Port B Continuous Read| DisplayController
     DisplayController --> |TMDS / Sync Pulses| Monitor
     UART --> |TX Pin @ 115200 Baud| Terminal
+```
