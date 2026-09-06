@@ -1,5 +1,3 @@
-# Install script for directory: /Users/antoniomolina/Desktop/riscv-digital-twin/OS
-
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
   set(CMAKE_INSTALL_PREFIX "/usr/local")

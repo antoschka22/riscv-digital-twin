@@ -1,15 +1,28 @@
-
+/**
+ * @brief Minimal Memory Implementation
+ *
+ * A simplified version of the memory controller. It handles 1MB of RAM allocation, 
+ * Little-Endian memory translation, and basic out-of-bounds fault checking, but 
+ * lacks the MMIO routing present in the full memory.cpp file.
+ */
 #include "memory.h"
 #include <fstream>
 #include <iostream>
 
+/**
+ * @brief Initializes the memory subsystem.
+ */
 Memory::Memory() {
-    // Allocate 1 Megabyte of RAM, initialized to 0
+    // Allocate 1 Megabyte (1024 * 1024 bytes) of RAM, initialized to 0
     ram.resize(1024 * 1024, 0); 
 }
 
+/**
+ * @brief Reads a 32-bit word from memory.
+ * Combines 4 consecutive bytes into a single 32-bit integer using Little-Endian byte order
+ */
 uint32_t Memory::read32(uint32_t address) {
-    // Check for out-of-bounds memory access
+    // Check for out-of-bounds memory access before reading
     if (address + 3 >= ram.size()) {
         std::cerr << "Memory read fault at: 0x" << std::hex << address << std::endl;
         return 0;
@@ -22,7 +35,12 @@ uint32_t Memory::read32(uint32_t address) {
            ((uint32_t)(ram[address + 3]) << 24);
 }
 
+/**
+ * @brief Writes a 32-bit word to memory.
+ * Splits a 32-bit integer into 4 consecutive bytes using Little-Endian byte order
+ */
 void Memory::write32(uint32_t address, uint32_t value) {
+    // Check for out-of-bounds memory access before writing
     if (address + 3 >= ram.size()) {
         std::cerr << "Memory write fault at: 0x" << std::hex << address << std::endl;
         return;
@@ -35,14 +53,18 @@ void Memory::write32(uint32_t address, uint32_t value) {
     ram[address + 3] = (value & 0xFF000000) >> 24;
 }
 
+/**
+ * @brief Injects a compiled binary payload into the RAM space
+ */
 void Memory::load_binary(const char* filename) {
-    // Open the binary file at the end to get its size
+    // Open the binary file at the end (std::ios::ate) to easily calculate its size
     std::ifstream file(filename, std::ios::binary | std::ios::ate);
     if (!file.is_open()) {
         std::cerr << "Failed to open binary file: " << filename << std::endl;
         return;
     }
 
+    // Capture the size, then rewind the file pointer to the beginning
     std::streamsize size = file.tellg();
     file.seekg(0, std::ios::beg);
 

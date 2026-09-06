@@ -1,8 +1,19 @@
+/**
+ * @brief RISC-V CPU Core Emulator
+ *
+ * Implements the state and execution loop of a 32-bit RISC-V processor (RV32IMA)
+ * Handles instruction fetching, decoding, execution, memory mapping, and traps
+ */
 #include "cpu.h"
 #include <iostream>
 #include <cstdint>
 #include <iomanip>
 
+/**
+ * @brief Initializes the CPU state upon boot
+ * Sets the Program Counter (PC) to 0x00000000 and zeroes out all 32 general-purpose 
+ * registers and 4096 Control and Status Registers (CSRs)
+ */
 CPU::CPU(Memory* memory_instance) {
     mem = memory_instance;
     pc = 0x00000000; // Start booting at address 0
@@ -19,23 +30,24 @@ CPU::CPU(Memory* memory_instance) {
 }
 
 uint32_t CPU::read_csr(uint16_t addr) {
-    // If the CSR doesn't exist in our map yet, this initializes it to 0 and returns 0.
     return csrs[addr]; 
 }
 
 void CPU::write_csr(uint16_t addr, uint32_t value) {
-    // In a full implementation, you would mask out read-only bits here 
-    // (e.g., hardwiring certain bits of mstatus to 0 or 1).
     csrs[addr] = value;
 }
 
-// Update your trap function to disable interrupts when entering a trap!
+/**
+ * @brief Handles synchronous exceptions and asynchronous interrupts
+ * Captures the current machine state, disables global interrupts and routes 
+ * execution to the trap handler address specified in the MTVEC register
+ */
 void CPU::trap(uint32_t cause, uint32_t tval) {
     write_csr(0x341, pc);    // CSR_MEPC
     write_csr(0x342, cause); // CSR_MCAUSE
     write_csr(0x343, tval);  // CSR_MTVAL
     
-    // Disable interrupts by clearing MIE (bit 3) in mstatus (0x300)
+    // Disable interrupts
     uint32_t mstatus = read_csr(0x300);
     write_csr(0x300, mstatus & ~(1 << 3)); 
     
@@ -43,17 +55,23 @@ void CPU::trap(uint32_t cause, uint32_t tval) {
     pc = mtvec & ~0x3; 
 }
 
+/**
+ * @brief Executes a single processor instruction cycle
+ * Evaluates pending interrupts, fetches the next 32-bit instruction, decodes its components, 
+ * and processes ALU, Load/Store and Branch operations
+ * @return true to continue execution, false if the CPU halts via EBREAK
+ */
 bool CPU::step() {
     mem->mtime++;
 
-    // 1. Update the Timer Interrupt Pending (MTIP) bit in the mip register (CSR 0x344)
+    // Update MTIP bit in the mip register (CSR 0x344)
     if (mem->mtime >= mem->mtimecmp) {
         csrs[0x344] |= (1 << 7); // Set MTIP
     } else {
         csrs[0x344] &= ~(1 << 7); // Clear MTIP
     }
 
-    // 2. Check if we should trap
+    // Check trap
     bool global_interrupt_enable = (csrs[0x300] & (1 << 3)) != 0; // mstatus.MIE
     bool timer_interrupt_enable  = (csrs[0x304] & (1 << 7)) != 0; // mie.MTIE
     bool timer_interrupt_pending = (csrs[0x344] & (1 << 7)) != 0; // mip.MTIP
@@ -79,23 +97,21 @@ bool CPU::step() {
 
     switch(opcode) {
         
-        case 0x37: // LUI (Load Upper Immediate)
+        case 0x37: // LUI
             if (rd != 0) {
-                // Keep upper 20 bits, zero out lower 12 bits
                 regs[rd] = instruction & 0xFFFFF000; 
             }
             pc += 4;
             return true;
 
-        case 0x17: // AUIPC (Add Upper Immediate to PC)
+        case 0x17: // AUIPC
             if (rd != 0) {
                 regs[rd] = pc + (instruction & 0xFFFFF000);
             }
             pc += 4;
             return true;
 
-        case 0x13: // I-Type (ALU Immediate Operations)
-            {
+        case 0x13:{ // I-Type (ALU Immediate Operations)
                 // Sign-extend the 12-bit immediate to 32 bits
                 int32_t imm = ((int32_t)instruction) >> 20; 
                 uint32_t shamt = imm & 0x1F; // For shift operations
@@ -103,10 +119,10 @@ bool CPU::step() {
                 if (rd != 0) { 
                     switch(funct3) {
                         case 0x0: regs[rd] = regs[rs1] + imm; break; // ADDI
-                        case 0x2: // SLTI (Set Less Than Immediate)
+                        case 0x2: // SLTI 
                             regs[rd] = ((int32_t)regs[rs1] < imm) ? 1 : 0; 
                             break;
-                        case 0x3: // SLTIU (Set Less Than Immediate Unsigned)
+                        case 0x3: // SLTIU
                             regs[rd] = (regs[rs1] < (uint32_t)imm) ? 1 : 0; 
                             break;
                         case 0x4: regs[rd] = regs[rs1] ^ imm; break; // XORI
@@ -115,12 +131,11 @@ bool CPU::step() {
                         
                         case 0x1: regs[rd] = regs[rs1] << shamt; break; // SLLI
                         case 0x5: 
-                            // Check bit 30 (which is part of funct7) to differentiate SRLI and SRAI
                             if ((instruction >> 30) & 1) { 
-                                // SRAI (Arithmetic Shift Right - preserves sign)
+                                // SRAI
                                 regs[rd] = (int32_t)regs[rs1] >> shamt; 
                             } else { 
-                                // SRLI (Logical Shift Right - fills with zeros)
+                                // SRLI
                                 regs[rd] = regs[rs1] >> shamt; 
                             }
                             break;
@@ -133,8 +148,7 @@ bool CPU::step() {
             }
             return true;
 
-        case 0x33: // R-Type (ALU & M-Extension Register-Register Operations)
-            {
+        case 0x33:{ // R-Type
                 if (rd != 0) {
                     if (funct7 == 0x01) { 
                         // --- M EXTENSION (Multiplication & Division) ---
@@ -142,43 +156,43 @@ bool CPU::step() {
                             case 0x0: // MUL
                                 regs[rd] = (uint32_t)((int32_t)regs[rs1] * (int32_t)regs[rs2]); 
                                 break;
-                            case 0x1: // MULH (Signed * Signed)
+                            case 0x1: // MULH
                                 regs[rd] = (uint32_t)(((int64_t)(int32_t)regs[rs1] * (int64_t)(int32_t)regs[rs2]) >> 32); 
                                 break;
-                            case 0x2: // MULHSU (Signed * Unsigned)
+                            case 0x2: // MULHSU
                                 regs[rd] = (uint32_t)(((int64_t)(int32_t)regs[rs1] * (int64_t)(uint32_t)regs[rs2]) >> 32);
                                 break;
-                            case 0x3: // MULHU (Unsigned * Unsigned)
+                            case 0x3: // MULHU
                                 regs[rd] = (uint32_t)(((uint64_t)regs[rs1] * (uint64_t)regs[rs2]) >> 32);
                                 break;
-                            case 0x4: // DIV (Signed)
+                            case 0x4: // DIV
                                 if (regs[rs2] == 0) {
-                                    regs[rd] = 0xFFFFFFFF; // Division by zero returns -1
+                                    regs[rd] = 0xFFFFFFFF;
                                 } else if (regs[rs1] == 0x80000000 && regs[rs2] == 0xFFFFFFFF) {
                                     regs[rd] = 0x80000000; // Overflow handles INT_MIN
                                 } else {
                                     regs[rd] = (uint32_t)((int32_t)regs[rs1] / (int32_t)regs[rs2]);
                                 }
                                 break;
-                            case 0x5: // DIVU (Unsigned)
+                            case 0x5: // DIVU
                                 if (regs[rs2] == 0) {
-                                    regs[rd] = 0xFFFFFFFF; // Division by zero returns max unsigned val
+                                    regs[rd] = 0xFFFFFFFF;
                                 } else {
                                     regs[rd] = regs[rs1] / regs[rs2];
                                 }
                                 break;
-                            case 0x6: // REM (Signed)
+                            case 0x6: // REM
                                 if (regs[rs2] == 0) {
-                                    regs[rd] = regs[rs1]; // Division by zero returns dividend
+                                    regs[rd] = regs[rs1];
                                 } else if (regs[rs1] == 0x80000000 && regs[rs2] == 0xFFFFFFFF) {
                                     regs[rd] = 0; // Overflow returns 0
                                 } else {
                                     regs[rd] = (uint32_t)((int32_t)regs[rs1] % (int32_t)regs[rs2]);
                                 }
                                 break;
-                            case 0x7: // REMU (Unsigned)
+                            case 0x7: // REMU
                                 if (regs[rs2] == 0) {
-                                    regs[rd] = regs[rs1]; // Division by zero returns dividend
+                                    regs[rd] = regs[rs1];
                                 } else {
                                     regs[rd] = regs[rs1] % regs[rs2];
                                 }
@@ -198,13 +212,13 @@ bool CPU::step() {
                                 }
                                 break;
                             case 0x1: 
-                                // SLL (Shift Left Logical) - shift amount is lower 5 bits of rs2
+                                // SLL
                                 regs[rd] = regs[rs1] << (regs[rs2] & 0x1F); 
                                 break;
-                            case 0x2: // SLT (Set Less Than - signed)
+                            case 0x2: // SLT
                                 regs[rd] = ((int32_t)regs[rs1] < (int32_t)regs[rs2]) ? 1 : 0;
                                 break;
-                            case 0x3: // SLTU (Set Less Than Unsigned)
+                            case 0x3: // SLTU
                                 regs[rd] = (regs[rs1] < regs[rs2]) ? 1 : 0;
                                 break;
                             case 0x4: 
@@ -212,10 +226,10 @@ bool CPU::step() {
                                 break; 
                             case 0x5:
                                 if (funct7 == 0x20) {
-                                    // SRA (Arithmetic Shift Right)
+                                    // SRA
                                     regs[rd] = (int32_t)regs[rs1] >> (regs[rs2] & 0x1F);
                                 } else {
-                                    // SRL (Logical Shift Right)
+                                    // SRL
                                     regs[rd] = regs[rs1] >> (regs[rs2] & 0x1F);
                                 }
                                 break;
@@ -235,27 +249,26 @@ bool CPU::step() {
             }
             return true;
 
-        case 0x03: // I-Type (Load Operations)
-            {
+        case 0x03:{ // I-Type (Load Operations)
                 // Sign-extend the 12-bit immediate
                 int32_t imm = ((int32_t)instruction) >> 20; 
                 uint32_t addr = regs[rs1] + imm;
 
                 if (rd != 0) {
                     switch(funct3) {
-                        case 0x0: // LB (Load Byte - sign extended)
+                        case 0x0: // LB
                             regs[rd] = (int32_t)(int8_t)mem->read8(addr);
                             break;
-                        case 0x1: // LH (Load Halfword - sign extended)
+                        case 0x1: // LH
                             regs[rd] = (int32_t)(int16_t)mem->read16(addr);
                             break;
-                        case 0x2: // LW (Load Word)
+                        case 0x2: // LW
                             regs[rd] = mem->read32(addr);
                             break;
-                        case 0x4: // LBU (Load Byte Unsigned)
+                        case 0x4: // LBU
                             regs[rd] = mem->read8(addr);
                             break;
-                        case 0x5: // LHU (Load Halfword Unsigned)
+                        case 0x5: // LHU
                             regs[rd] = mem->read16(addr);
                             break;
                         default:
@@ -267,20 +280,19 @@ bool CPU::step() {
             }
             return true;
 
-        case 0x23: // S-Type (Store Operations)
-            {
+        case 0x23:{ // S-Type
                 // Reconstruct and sign-extend the 12-bit immediate for S-Type
                 int32_t imm = ((int32_t)(instruction & 0xFE000000) >> 20) | ((instruction >> 7) & 0x1F);
                 uint32_t addr = regs[rs1] + imm;
 
                 switch(funct3) {
-                    case 0x0: // SB (Store Byte)
+                    case 0x0: // SB
                         mem->write8(addr, regs[rs2] & 0xFF);
                         break;
-                    case 0x1: // SH (Store Halfword)
+                    case 0x1: // SH
                         mem->write16(addr, regs[rs2] & 0xFFFF);
                         break;
-                    case 0x2: // SW (Store Word)
+                    case 0x2: // SW
                         mem->write32(addr, regs[rs2]);
                         break;
                     default: 
@@ -291,8 +303,7 @@ bool CPU::step() {
             }
             return true;
 
-        case 0x63: // B-Type (Branch Operations)
-            {
+        case 0x63:{ // B-Type
                 // Reconstruct and sign-extend the 13-bit immediate
                 int32_t imm = ((int32_t)(instruction & 0x80000000) >> 19) | // Sign extend and bit 12
                               ((instruction & 0x80) << 4) |                 // bit 11
@@ -320,8 +331,7 @@ bool CPU::step() {
             }
             return true;
 
-        case 0x6F: // J-Type (JAL - Jump And Link)
-            {
+        case 0x6F:{ // J-Type (JAL - Jump And Link)
                 // Reconstruct and sign-extend the 21-bit immediate
                 int32_t imm = ((int32_t)(instruction & 0x80000000) >> 11) | // Sign extend and bit 20
                               (instruction & 0x000FF000) |                  // bits 19:12
@@ -329,52 +339,40 @@ bool CPU::step() {
                               ((instruction >> 20) & 0x7FE);                // bits 10:1
 
                 if (rd != 0) {
-                    regs[rd] = pc + 4; // Save return address
+                    regs[rd] = pc + 4;
                 }
-                pc += imm; // Jump
+                pc += imm;
             }
             return true;
 
-        case 0x67: // I-Type (JALR - Jump And Link Register)
-            {
-                // 12-bit signed immediate
+        case 0x67:{ // I-Type (JALR - Jump And Link Register)
                 int32_t imm = ((int32_t)instruction) >> 20; 
                 
-                // Target address is obtained by adding imm to rs1, then setting least-significant bit to 0
                 uint32_t next_pc = (regs[rs1] + imm) & ~1; 
 
                 if (rd != 0) {
-                    regs[rd] = pc + 4; // Save return address
+                    regs[rd] = pc + 4;
                 }
-                pc = next_pc; // Jump
+                pc = next_pc;
             }
             return true;
 
-        case 0x2F: // AMO (Atomic Memory Operations - A Extension)
-            {
-                // The specific AMO operation is defined by the top 5 bits of funct7
+        case 0x2F:{ // AMO (Atomic Memory Operations - A Extension)
                 uint32_t funct5 = (instruction >> 27) & 0x1F;
                 uint32_t addr = regs[rs1];
-                
-                // For a basic single-core emulator, atomic operations can just execute 
-                // sequentially without needing bus locks, as no other core is interrupting.
                 
                 if (funct5 == 0x02) { 
                     // LR.W (Load-Reserved Word)
                     if (rd != 0) {
                         regs[rd] = mem->read32(addr);
                     }
-                    // Note: A true multi-core emulator would set a reservation flag for 'addr' here.
                 } 
                 else if (funct5 == 0x03) { 
-                    // SC.W (Store-Conditional Word)
                     mem->write32(addr, regs[rs2]);
                     if (rd != 0) {
                         regs[rd] = 0; // 0 indicates success in a basic single-core setup
                     }
-                    // Note: A true multi-core would check the reservation flag before writing.
-                } 
-                else {
+                } else {
                     // Standard Read-Modify-Write AMO operations
                     uint32_t t = mem->read32(addr); // Read original value
                     uint32_t result = 0;
@@ -414,12 +412,10 @@ bool CPU::step() {
 
 
         case 0x0F: // FENCE
-            // In a basic single-core emulator, memory ordering FENCE is essentially a NOP
             pc += 4;
             return true;
 
-        case 0x73: // SYSTEM & Zicsr Extension
-            {
+        case 0x73:{
                 uint16_t csr_addr = instruction >> 20;
                 uint32_t zimm = rs1; 
                 
@@ -438,48 +434,42 @@ bool CPU::step() {
                             
                         } else if (instruction == 0x30200073) {
                             // MRET: Return from OS trap handler
-                            pc = read_csr(0x341); // CSR_MEPC (Return to where we left off)
+                            pc = read_csr(0x341);
                             
                             // Re-enable interrupts (MIE bit) when leaving the trap!
                             uint32_t mstatus = read_csr(0x300);
                             write_csr(0x300, mstatus | (1 << 3)); 
-                            // ---------------------------
                             
                             return true; 
                         } else {
-                            trap(2, instruction); //Illegal Instruction
+                            trap(2, instruction);
                             return true;
                         }
                         break;
                         
-                    case 0x1: // CSRRW (Read / Write)
-                        {
+                    case 0x1:{ // CSRRW (Read / Write)
                             uint32_t t = 0;
-                            if (rd != 0) t = read_csr(csr_addr); // Only read if rd != x0
-                            write_csr(csr_addr, regs[rs1]);      // Always write
+                            if (rd != 0) t = read_csr(csr_addr);
+                            write_csr(csr_addr, regs[rs1]);
                             if (rd != 0) regs[rd] = t;
                         }
                         break;
                         
-                    case 0x2: // CSRRS (Read / Set)
-                        {
+                    case 0x2:{ // CSRRS (Read / Set)
                             uint32_t t = read_csr(csr_addr);
-                            // RISC-V spec: If rs1=x0, instruction shouldn't write to CSR (avoids side effects)
                             if (rs1 != 0) write_csr(csr_addr, t | regs[rs1]);
                             if (rd != 0) regs[rd] = t;
                         }
                         break;
                         
-                    case 0x3: // CSRRC (Read / Clear)
-                        {
+                    case 0x3:{ // CSRRC (Read / Clear)
                             uint32_t t = read_csr(csr_addr);
                             if (rs1 != 0) write_csr(csr_addr, t & ~regs[rs1]);
                             if (rd != 0) regs[rd] = t;
                         }
                         break;
                         
-                    case 0x5: // CSRRWI (Read / Write Immediate)
-                        {
+                    case 0x5:{ // CSRRWI (Read / Write Immediate)
                             uint32_t t = 0;
                             if (rd != 0) t = read_csr(csr_addr);
                             write_csr(csr_addr, zimm);
@@ -487,16 +477,14 @@ bool CPU::step() {
                         }
                         break;
                         
-                    case 0x6: // CSRRSI (Read / Set Immediate)
-                        {
+                    case 0x6:{ // CSRRSI (Read / Set Immediate)
                             uint32_t t = read_csr(csr_addr);
                             if (zimm != 0) write_csr(csr_addr, t | zimm);
                             if (rd != 0) regs[rd] = t;
                         }
                         break;
                         
-                    case 0x7: // CSRRCI (Read / Clear Immediate)
-                        {
+                    case 0x7:{ // CSRRCI (Read / Clear Immediate)
                             uint32_t t = read_csr(csr_addr);
                             if (zimm != 0) write_csr(csr_addr, t & ~zimm);
                             if (rd != 0) regs[rd] = t;
@@ -520,6 +508,9 @@ bool CPU::step() {
     return true;
 }
 
+/**
+ * @brief Diagnostic tool to print the current state of all 32 ABI-named registers
+ */
 void CPU::dump_registers() {
     // Standard RISC-V ABI register names
     const char* abi_names[] = {
@@ -536,7 +527,6 @@ void CPU::dump_registers() {
                   << " (" << std::setfill(' ') << std::setw(4) << abi_names[i] << ") : "
                   << "0x" << std::setfill('0') << std::setw(8) << std::hex << regs[i];
                   
-        // Print 4 registers per row
         if ((i + 1) % 4 == 0) {
             std::cout << std::endl;
         } else {
