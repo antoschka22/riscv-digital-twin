@@ -1,18 +1,27 @@
+/**
+ * @brief RISC-V System-on-Chip (SoC) Top-Level Module
+ *
+ * This is the master integration file that wires together the CPU core, 
+ * memory subsystems, and hardware peripherals (UART, HDMI/VGA, Timer)
+ * It manages the primary datapath, instruction routing, and Memory-Mapped 
+ * I/O (MMIO) address decoding
+ */
 module cpu_top(
-    input  wire clk_27m,
-    input  wire rst,
-    output wire uart_tx_pin    // Physical wire to the USB-Serial bridge (Pin 69)
+    input  wire clk_27m,       // 27 MHz external oscillator input
+    input  wire rst,           // System reset signal]
+    output wire uart_tx_pin,   // Physical wire to the USB-Serial bridge
 
-    // HDMI Physical Pins
+    // HDMI/TMDS Physical Differential Pins
     output wire       tmds_clk_p,
     output wire       tmds_clk_n,
     output wire [2:0] tmds_d_p,
     output wire [2:0] tmds_d_n
 );
 
-    // Instantiate the PLL to get our two clocks
-    wire clk_135m;
-    wire clk_pixel; // 27 MHz
+    // --- CLOCK GENERATION ---
+    // Instantiate the Phase-Locked Loop (PLL) to generate our system clocks
+    wire clk_135m;  // High-speed clock for HDMI serialization
+    wire clk_pixel; // 27 MHz base clock for the CPU and pixel timing
 
     gowin_rpll pll_inst (
         .clkin(clk_27m),
@@ -20,17 +29,15 @@ module cpu_top(
         .clkoutp(clk_pixel)
     );
 
-    // --- INTERNAL WIRES ---
+    // --- INSTRUCTION FETCH ---
     wire [31:0] pc_current;
     wire [31:0] instruction;
     
     // --- IMMEDIATE EXTRACTION LOGIC ---
-    // I-Type (Load, ADDI)
-    wire [31:0] imm_i = {{20{instruction[31]}}, instruction[31:20]};
-    // S-Type (Store)
-    wire [31:0] imm_s = {{20{instruction[31]}}, instruction[31:25], instruction[11:7]};
-    // B-Type (Branch)
-    wire [31:0] imm_b = {{20{instruction[31]}}, instruction[7], instruction[30:25], instruction[11:8], 1'b0};
+    // Slices and sign-extends the raw 32-bit instruction into specific formats
+    wire [31:0] imm_i = {{20{instruction[31]}}, instruction[31:20]}; // I-Type (Load, ADDI)
+    wire [31:0] imm_s = {{20{instruction[31]}}, instruction[31:25], instruction[11:7]}; // S-Type (Store)
+    wire [31:0] imm_b = {{20{instruction[31]}}, instruction[7], instruction[30:25], instruction[11:8], 1'b0}; // B-Type (Branch)
 
     wire [6:0] opcode = instruction[6:0];
     reg  [31:0] imm;
@@ -38,13 +45,14 @@ module cpu_top(
     // Multiplexer to select the correct immediate format based on the instruction opcode
     always @(*) begin
         case(opcode)
-            7'b0100011: imm = imm_s; // Store uses S-Type
-            7'b1100011: imm = imm_b; // Branch uses B-Type
-            default:    imm = imm_i; // Loads and ADDI use I-Type
+            7'b0100011: imm = imm_s; // Store operations use S-Type
+            7'b1100011: imm = imm_b; // Branch operations use B-Type
+            default:    imm = imm_i; // Default to I-Type for Loads and ALU immediates
         endcase
     end
 
     // --- CONTROL UNIT ---
+    // Translates the instruction into hardware control signals
     wire [3:0]  alu_ctrl;
     wire        reg_write;
     wire        alu_src;
@@ -62,14 +70,18 @@ module cpu_top(
         .result_src(result_src)
     );
 
-    // --- MMIO Address Decoding ---
+    // --- MMIO ADDRESS DECODING ---
+    // Detect if the CPU is accessing specific hardware peripheral memory spaces
     wire is_mmio_vram   = (alu_result >= 32'h04000000) && (alu_result < 32'h0404B000);
+    wire is_mmio_led    = (alu_result == 32'd100);
+    wire is_mmio_uart   = (alu_result == 32'h10000000); 
+    wire is_uart_status = (alu_result == 32'h10000004); // UART Status Register
+    wire is_mmio_clint  = (alu_result == 32'h0200BFF8) || (alu_result == 32'h0200BFFC) || 
+                          (alu_result == 32'h02004000) || (alu_result == 32'h02004004);
 
     // --- THE GRAPHICS PIPELINE ---
-    // Calculate the VRAM address for the CPU
-    // Address 0x04000000 becomes VRAM index 0. We divide by 4 (shift right 2) because
-    // the CPU writes 32-bit words, but our VRAM is a flat byte array in software.
-    // In our hardware, we just map 1 word = 1 pixel for simplicity.
+    // Map the 32-bit CPU memory address to the internal VRAM buffer structure
+    // Shift right 2 divides the address by 4 since the hardware maps 1 word = 1 pixel
     wire [16:0] cpu_vram_addr = alu_result[18:2]; 
     
     wire [9:0] vga_x;
@@ -77,18 +89,16 @@ module cpu_top(
     wire       active_video;
     wire [7:0] vga_pixel_color;
 
-    // Scale 640x480 down to 320x240
+    // Scale 640x480 hardware output down to a 320x240 internal resolution
     wire [8:0] scaled_x = vga_x[9:1];
     wire [8:0] scaled_y = vga_y[9:1];
-    
-    // Calculate the VRAM read address: (Y * 320) + X
     wire [16:0] vga_vram_addr = (scaled_y * 17'd320) + scaled_x;
 
     vram video_memory (
         .clk(clk_pixel),
         .cpu_we(mem_write & is_mmio_vram),
         .cpu_addr(cpu_vram_addr),
-        .cpu_data(read_data2[7:0]), // Just use the lowest 8 bits for color
+        .cpu_data(read_data2[7:0]), // Use the lowest 8 bits for mapped color
         .vga_addr(vga_vram_addr),
         .vga_data(vga_pixel_color)
     );
@@ -96,6 +106,7 @@ module cpu_top(
     wire vga_hsync;
     wire vga_vsync;
 
+    // Generates the strict timing signals required for the display
     vga_controller display_timing (
         .clk(clk_pixel),
         .rst(rst),
@@ -106,8 +117,29 @@ module cpu_top(
         .active_vid(active_video)
     );
 
-    // --- Physical Video Output Pins ---
-    wire [7:0] final_rgb = active_video ? vga_pixel_color : 8'h00;
+    // Expand the internal 8-bit color palette into standard 24-bit RGB for the HDMI encoder
+    wire [23:0] rgb_24bit = {
+        vga_pixel_color[7:5], 5'b0, // Red
+        vga_pixel_color[4:2], 5'b0, // Green
+        vga_pixel_color[1:0], 6'b0  // Blue
+    };
+
+    // Instantiate the DVI TX Core (HDMI Encoder)
+    DVI_TX_Top hdmi_encoder (
+        .I_rst_n(~rst),           
+        .I_serial_clk(clk_135m),  
+        .I_rgb_clk(clk_pixel),    
+        .I_rgb_vs(vga_vsync),
+        .I_rgb_hs(vga_hsync),
+        .I_rgb_de(active_video),  // HIGH when in visible display area
+        .I_rgb_r(rgb_24bit[23:16]),
+        .I_rgb_g(rgb_24bit[15:8]),
+        .I_rgb_b(rgb_24bit[7:0]),
+        .O_tmds_clk_p(tmds_clk_p),
+        .O_tmds_clk_n(tmds_clk_n),
+        .O_tmds_data_p(tmds_d_p),
+        .O_tmds_data_n(tmds_d_n)
+    );
 
     // --- ALU & REGISTERS ---
     wire [4:0]  rs1 = instruction[19:15];
@@ -119,7 +151,7 @@ module cpu_top(
     wire [31:0] alu_result;
     wire        alu_zero;
     
-    // Select between register data or immediate value for ALU input B
+    // Select between register data or immediate value for ALU input B based on control signal
     wire [31:0] alu_input_b = alu_src ? imm : read_data2; 
 
     alu alu_inst (
@@ -130,27 +162,24 @@ module cpu_top(
         .zero(alu_zero)
     );
 
-    // Extract the CSR address from the instruction
+    // --- CONTROL & STATUS REGISTERS (CSRs) ---
     wire [11:0] csr_addr = instruction[31:20];
-    
-    // Control Unit wires
     wire csr_we;
     wire is_mret;
-    
-    // CSR File Output Wires
     wire [31:0] csr_read_data;
     wire [31:0] mtvec_out;
     wire [31:0] mepc_out;
     wire        trap_fire;
 
+    // The CSR file handles privileged architecture state and interrupts
     csr_file csrs (
         .clk(clk_pixel),
         .rst(rst),
         .csr_addr(csr_addr),
-        .csr_write_data(read_data1), // rs1 holds the data we write to the CSR
+        .csr_write_data(read_data1),
         .csr_we(csr_we),
         .csr_read_data(csr_read_data),
-        .timer_int(timer_interrupt), // Fed directly from the CLINT!
+        .timer_int(timer_interrupt), // Timer interrupt fed directly from the CLINT
         .current_pc(pc_current),
         .is_mret(is_mret),
         .mtvec_out(mtvec_out),
@@ -158,23 +187,18 @@ module cpu_top(
         .trap_fire(trap_fire)
     );
 
-    // If the control unit says csr_we is high, save the CSR value into the destination register (rd)
-    wire [31:0] write_back_data = csr_we ? csr_read_data : (result_src ? peripheral_read_data : alu_result);
+    // --- PC, BRANCHING & ROM ---
+    wire        take_branch = branch & alu_zero; 
 
-    // This determines exactly what address the CPU executes next.
-    // Priority 1: Hardware Trap (Jump to OS Trap Handler)
-    // Priority 2: MRET (Return to the saved task)
-    // Priority 3: Branch (If a condition was met)
-    // Default:    PC + 4
-    
+    // Determine the next Program Counter execution address based on system priority:
+    // 1: Hardware Trap -> Jump to OS Trap Handler (mtvec)
+    // 2: MRET -> Return to the saved task (mepc)
+    // 3: Branch -> Jump to calculated offset if condition met
+    // 4: Default -> PC + 4 (next instruction)
     wire [31:0] pc_next = trap_fire   ? mtvec_out : 
                           is_mret     ? mepc_out  : 
                           take_branch ? (pc_current + imm) : 
                                         (pc_current + 32'd4);
-
-    // --- BRANCH LOGIC & PC ---
-    wire        take_branch = branch & alu_zero; 
-    wire [31:0] pc_next = take_branch ? (pc_current + imm) : (pc_current + 32'd4);
 
     pc_register pc_reg (
         .clk(clk_pixel),
@@ -188,19 +212,9 @@ module cpu_top(
         .instr(instruction)
     );
 
-    // --- MMIO ADDRESS DECODING ---
-    wire is_mmio_led    = (alu_result == 32'd100);
-    wire is_mmio_uart   = (alu_result == 32'h10000000); 
-    wire is_uart_status = (alu_result == 32'h10000004); // Status Register
-
-    // Masking to check if the address falls in the CLINT range
-    wire is_mmio_clint  = (alu_result == 32'h0200BFF8) || 
-                          (alu_result == 32'h0200BFFC) || 
-                          (alu_result == 32'h02004000) || 
-                          (alu_result == 32'h02004004);
-
-    // --- DATA MEMORY (RAM) ---
-    // Gate the memory write so MMIO operations don't corrupt standard RAM
+    // --- DATA MEMORY (RAM) & PERIPHERALS ---
+    
+    // Gate memory writes so MMIO peripheral operations don't corrupt standard RAM
     wire real_ram_write = mem_write & ~is_mmio_led & ~is_mmio_uart;
     wire [31:0] read_data_mem;
 
@@ -212,39 +226,28 @@ module cpu_top(
         .read_data(read_data_mem) 
     );
 
-    // CLINT Instantiation ---
+    // Timer Interrupt Block (CLINT)
     wire [31:0] clint_read_data;
     wire        timer_interrupt;
 
     clint timer_block (
         .clk(clk_pixel),
         .rst(rst),
-        .we(mem_write & is_mmio_clint), // Only write if addressing the CLINT
+        .we(mem_write & is_mmio_clint), // Only write if targeting the CLINT
         .addr(alu_result),
         .write_data(read_data2),
         .read_data(clint_read_data),
-        .timer_int(timer_interrupt)     // The critical interrupt signal!
+        .timer_int(timer_interrupt)     // The critical timer interrupt signal
     );
 
-    // --- MMIO Read Multiplexer ---
-    // If the CPU is reading from the CLINT, route the CLINT data.
-    // If reading from UART Status, route the UART busy signal.
-    // Otherwise, route normal RAM.
-    wire [31:0] peripheral_read_data;
-    assign peripheral_read_data = is_mmio_clint  ? clint_read_data :
-                                  is_uart_status ? {31'b0, uart_busy} : 
-                                  read_data_mem;
+    // Intercept UART and CLINT reads, routing them appropriately; otherwise default to RAM
+    wire uart_busy;
+    wire [31:0] peripheral_read_data = is_mmio_clint  ? clint_read_data :
+                                       is_uart_status ? {31'b0, uart_busy} : 
+                                       read_data_mem;
 
-    wire [31:0] write_back_data = result_src ? peripheral_read_data : alu_result;
-
-    // --- WRITE-BACK MULTIPLEXER ---
-    wire uart_busy; // Declared here to be visible to the read multiplexer
-    
-    // If CPU reads from 0x10000004, intercept and return the UART busy status
-    wire [31:0] peripheral_read_data = is_uart_status ? {31'b0, uart_busy} : read_data_mem;
-    
-    // Select between ALU math result or memory/peripheral data to save to register
-    wire [31:0] write_back_data = result_src ? peripheral_read_data : alu_result;
+    // Select between ALU math result, CSR data, or Memory/Peripheral data to save to register file
+    wire [31:0] write_back_data = csr_we ? csr_read_data : (result_src ? peripheral_read_data : alu_result);
 
     register_file reg_file (
         .clk(clk_pixel),
@@ -257,53 +260,17 @@ module cpu_top(
         .read_data2(read_data2)
     );
 
-    // --- HARDWARE PERIPHERALS ---
-    // Physical LED Flip-Flop
-    always @(posedge clk_pixel or posedge rst) begin
-        if (rst) begin
-            led_pin <= 1'b0;
-        end else if (mem_write && is_mmio_led) begin
-            led_pin <= read_data2[0];
-        end
-    end
-
-    // Pulse tx_start high for exactly 1 clock cycle when CPU writes to UART address
+    // --- HARDWARE COMMUNICATIONS ---
+    // Pulse tx_start high for exactly 1 clock cycle when the CPU writes to the UART address
     wire uart_tx_start = (mem_write && is_mmio_uart);
 
     uart_tx uart (
         .clk(clk_pixel),
         .rst(rst),
         .tx_start(uart_tx_start),
-        .tx_data(read_data2[7:0]), // Send the lowest 8 bits (ASCII char)
+        .tx_data(read_data2[7:0]), // Transmit the lowest 8 bits as an ASCII character
         .tx_pin(uart_tx_pin),
         .tx_busy(uart_busy)
-    );
-
-    // Expand the 8-bit color palette into 24-bit RGB for HDMI
-    // For a simple 8-bit palette (RRRGGGBB), we stretch the bits to fill 24 bits
-    wire [23:0] rgb_24bit = {
-        vga_pixel_color[7:5], 5'b0, // Red
-        vga_pixel_color[4:2], 5'b0, // Green
-        vga_pixel_color[1:0], 6'b0  // Blue
-    };
-
-    // Instantiate the DVI TX Core
-    DVI_TX_Top hdmi_encoder (
-        .I_rst_n(~rst),           // Active-low reset
-        .I_serial_clk(clk_135m),  // 135 MHz serial clock
-        .I_rgb_clk(clk_pixel),    // 27 MHz pixel clock
-        .I_rgb_vs(vga_vsync),
-        .I_rgb_hs(vga_hsync),
-        .I_rgb_de(active_video),  // Data Enable (HIGH when in visible area)
-        .I_rgb_r(rgb_24bit[23:16]),
-        .I_rgb_g(rgb_24bit[15:8]),
-        .I_rgb_b(rgb_24bit[7:0]),
-        
-        // Physical TMDS Outputs
-        .O_tmds_clk_p(tmds_clk_p),
-        .O_tmds_clk_n(tmds_clk_n),
-        .O_tmds_data_p(tmds_d_p),
-        .O_tmds_data_n(tmds_d_n)
     );
 
 endmodule
